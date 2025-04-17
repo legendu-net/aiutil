@@ -1,5 +1,4 @@
-"""A utils Python package for data scientists.
-"""
+"""A utils Python package for data scientists."""
 
 from . import poetry
 

@@ -1,5 +1,4 @@
-"""Test dataframe.py.
-"""
+"""Test dataframe.py."""
 
 from pathlib import Path
 import aiutil

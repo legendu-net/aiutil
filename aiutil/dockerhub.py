@@ -1,5 +1,4 @@
-"""DockerHub
-"""
+"""DockerHub"""
 
 import requests
 

@@ -1,5 +1,4 @@
-"""Script for fetch and filtering Spark application logs.
-"""
+"""Script for fetch and filtering Spark application logs."""
 
 from pathlib import Path
 import re

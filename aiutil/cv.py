@@ -1,5 +1,4 @@
-"""Computer vision related utils.
-"""
+"""Computer vision related utils."""
 
 from typing import Iterable
 from pathlib import Path

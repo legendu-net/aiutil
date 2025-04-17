@@ -1,5 +1,4 @@
-"""Wrapping HDFS commands.
-"""
+"""Wrapping HDFS commands."""
 
 from pathlib import Path
 import subprocess as sp

@@ -1,5 +1,4 @@
-"""Module for log filtering.
-"""
+"""Module for log filtering."""
 
 from typing import Sequence, TextIO
 from pathlib import Path
