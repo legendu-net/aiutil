@@ -1,5 +1,4 @@
-"""Date/time related utils.
-"""
+"""Date/time related utils."""
 
 from typing import Iterable
 import datetime

@@ -1,5 +1,4 @@
-"""Test the aiutil.jupyter module.
-"""
+"""Test the aiutil.jupyter module."""
 
 from pathlib import Path
 import aiutil.notebook.util

@@ -1,5 +1,4 @@
-"""SQL related utils.
-"""
+"""SQL related utils."""
 
 from pathlib import Path
 import subprocess as sp

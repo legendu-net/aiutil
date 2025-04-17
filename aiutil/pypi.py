@@ -1,5 +1,4 @@
-"""PYPI related utils.
-"""
+"""PYPI related utils."""
 
 from typing import Set
 import re

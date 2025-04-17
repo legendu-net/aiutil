@@ -1,5 +1,4 @@
-"""This module makes it easy to work with poetry to managing your Python project.
-"""
+"""This module makes it easy to work with poetry to managing your Python project."""
 
 from typing import Iterable
 from pathlib import Path

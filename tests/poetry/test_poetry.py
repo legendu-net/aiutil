@@ -1,5 +1,4 @@
-"""Test poetry.py.
-"""
+"""Test poetry.py."""
 
 from pathlib import Path
 import aiutil

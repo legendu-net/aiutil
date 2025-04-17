@@ -1,5 +1,4 @@
-"""URL related utility functions.
-"""
+"""URL related utility functions."""
 
 
 def format(url: str, text: str = "", type_="html") -> str:

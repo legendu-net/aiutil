@@ -1,5 +1,4 @@
-"""Hash code related utils.
-"""
+"""Hash code related utils."""
 
 import hashlib
 from pathlib import Path

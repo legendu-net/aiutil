@@ -1,5 +1,4 @@
-"""Memory related utils.
-"""
+"""Memory related utils."""
 
 import getpass
 import sys

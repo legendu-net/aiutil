@@ -1,5 +1,4 @@
-"""A module providing wrap over the git command.
-"""
+"""A module providing wrap over the git command."""
 
 from pathlib import Path
 import subprocess as sp

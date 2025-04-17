@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""Filesystem related util functions.
-"""
+"""Filesystem related util functions."""
 from typing import Iterable, Callable
 import itertools
 import os
