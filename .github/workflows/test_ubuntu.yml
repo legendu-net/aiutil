@@ -24,7 +24,7 @@ jobs:
       run: |
         curl -sSL https://raw.githubusercontent.com/legendu-net/icon/main/install_icon.sh | sudo bash -
         icon pt -ic
-        ~/.local/bin/poetry lock --no-update
+        ~/.local/bin/poetry lock -n
         ~/.local/bin/poetry env use python3
         ~/.local/bin/poetry install -E all
     - name: Test with pytest
