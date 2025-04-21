@@ -1,15 +1,19 @@
 {pkgs, ...}: {
-  packages = [
-    pkgs.neovim
-    pkgs.python311
-    pkgs.python311Packages.pip
-    pkgs.poetry
+  channel = "stable-24.11";
+  packages = with pkgs; [
+    neovim
+    ripgrep
+    rm-improved
+    bat
+    python311
+    python311Packages.pip
+    poetry
   ];
   env = {};
   idx = {
     # check extensions on https://open-vsx.org/
     extensions = [
-      "vscodevim.vim"
+      "asvetliakov.vscode-neovim"
       "ms-python.python"
       "ms-python.debugpy"
     ];
