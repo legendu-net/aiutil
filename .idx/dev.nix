@@ -5,11 +5,13 @@
     ripgrep
     rm-improved
     bat
-    python311
-    python311Packages.pip
     poetry
   ];
-  env = {};
+  env = {
+    PATH = [
+      "$HOME/.local/bin"
+    ];
+  };
   idx = {
     # check extensions on https://open-vsx.org/
     extensions = [
@@ -24,6 +26,10 @@
         poetry-project = ''
         poetry config --local virtualenvs.in-project true
         poetry install
+        '';
+          icon = ''
+        curl -sSL https://raw.githubusercontent.com/legendu-net/icon/main/install_icon.sh | bash -s -- \
+            -d ~/.local/bin
         '';
       };
     };
