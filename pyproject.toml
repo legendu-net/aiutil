@@ -28,6 +28,8 @@ dependencies = [
     "dulwich>=0.20.24",
     "scikit-image>=0.18.3",
     "paramiko>=3.2.0",
+    "nbformat>=5.10.4",
+    "nbconvert>=7.16.6",
 ]
 
 [project.optional-dependencies]
