@@ -28,7 +28,7 @@ jobs:
     - name: Install dependencies
       run: |
         curl -LsSf https://astral.sh/uv/install.sh | sh
-        ~/.local/bin/uv sync
+        ~/.local/bin/uv sync --all-extras
     - name: Lint with ruff
       run: |
         ~/.local/bin/uv run ruff check aiutil/ tests/
