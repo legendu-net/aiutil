@@ -32,7 +32,7 @@ jobs:
     - name: Lint with ruff
       run: |
         git branch
-        bat pyproject.toml
+        cat pyproject.toml
         ~/.local/bin/uv run ruff check pysparker/ tests/
     - name: Lint with pytype
       run: |
