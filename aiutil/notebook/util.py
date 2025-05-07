@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Jupyter/Lab notebooks related utils."""
+
 from pathlib import Path
 import subprocess as sp
 import itertools as it

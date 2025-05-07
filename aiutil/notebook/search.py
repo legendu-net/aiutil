@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Search Jupyter/Lab notebooks."""
+
 from typing import TypeAlias, Sequence
 import json
 from pathlib import Path

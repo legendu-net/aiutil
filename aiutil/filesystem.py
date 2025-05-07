@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Filesystem related util functions."""
+
 from typing import Iterable, Callable
 import itertools
 import os
@@ -548,9 +549,10 @@ def dedup_header(file: str | Path, output: str | Path = "") -> None:
     :param output: The path of the output file.
         If empty, then output to the standard output.
     """
-    with open(file, "rb") as fin, (
-        open(output, "wb") if output else sys.stdout.buffer
-    ) as fout:
+    with (
+        open(file, "rb") as fin,
+        open(output, "wb") if output else sys.stdout.buffer as fout,
+    ):
         header = fin.readline()
         fout.write(header)
         for line in fin:
@@ -606,9 +608,10 @@ def prune_json(input: str | Path, output: str | Path = ""):
         else:
             output = input.with_name(input.stem + "_prune.json")
     skip = False
-    with input.open("r", encoding="utf-8") as fin, output.open(
-        "w", encoding="utf-8"
-    ) as fout:
+    with (
+        input.open("r", encoding="utf-8") as fin,
+        output.open("w", encoding="utf-8") as fout,
+    ):
         for line in fin:
             line = line.strip()
             if line == '"value_counts": {':

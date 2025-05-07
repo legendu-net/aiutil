@@ -5,6 +5,7 @@ the password is encrypted and saved into a profile that is readable/writable onl
 If an user authenticate without specifying password,
 the saved password is used so that users do not have to type in password to authenticate every time.
 """
+
 from typing import Any
 import os
 from pathlib import Path
@@ -81,7 +82,7 @@ def authenticate(password: str, email: dict[str, str], user: str = "") -> None:
     :param user: User name. If empty, the current user name is used.
     """
     SUBJECT = "kinit: authentication {}"
-    MSG = f'kinit ({PID}): authentication on {HOST} ({HOST_IP}) {"{}"} at {datetime.datetime.now()}'
+    MSG = f"kinit ({PID}): authentication on {HOST} ({HOST_IP}) {'{}'} at {datetime.datetime.now()}"
     try:
         process = sp.run(
             ["/usr/bin/kinit", user if user else USER],
