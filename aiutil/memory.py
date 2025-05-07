@@ -34,7 +34,7 @@ def get_memory_usage(user: str = USER) -> int:
             for p in psutil.process_iter()
             if p.username() == USER and p.status() in STATUS
         )
-    except:
+    except Exception:
         return get_memory_usage(user)
 
 

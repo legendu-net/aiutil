@@ -94,8 +94,8 @@ class Notebook:
         :param language: A language criterion.
         """
         lang = _reg_criterion(language)
-        return all(self.lang == l.lower() for l in lang["include"]) and not any(
-            self.lang == l.lower() for l in lang["exclude"]
+        return all(self.lang == lg.lower() for lg in lang["include"]) and not any(
+            self.lang == lg.lower() for lg in lang["exclude"]
         )
 
     def cells(self, keyword: Criterion, type_: str = "") -> list[Cell]:

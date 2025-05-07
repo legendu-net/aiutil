@@ -31,7 +31,7 @@ class SparkSubmit:
         # set up loguru with the right logging level
         try:
             logger.remove(0)
-        except:
+        except Exception:
             pass
         logger.add(sys.stdout, level=level)
         self._spark_submit_log = {}

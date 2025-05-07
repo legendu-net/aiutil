@@ -35,6 +35,6 @@ def retry(task: Callable, times: int = 3, wait_seconds: float = 60):
     for _ in range(1, times):
         try:
             return task()
-        except:
+        except Exception:
             time.sleep(wait_seconds)
     return task()

@@ -46,7 +46,7 @@ def _find_path_content(path, pattern):
             try:
                 if pattern in p.read_text():
                     yield p
-            except:
+            except Exception:
                 pass
 
 
