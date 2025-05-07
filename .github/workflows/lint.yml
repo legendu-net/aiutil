@@ -31,9 +31,7 @@ jobs:
         ~/.local/bin/uv sync
     - name: Lint with ruff
       run: |
-        git branch
-        cat pyproject.toml
-        ~/.local/bin/uv run ruff check pysparker/ tests/
+        ~/.local/bin/uv run ruff check aiutil/ tests/
     - name: Lint with pytype
       run: |
         ~/.local/bin/uv run pytype ./
