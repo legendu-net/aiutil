@@ -2,6 +2,7 @@
   channel = "stable-24.11";
   packages = with pkgs; [
     util-linux
+    file
     bash-completion
     gitui
     neovim
