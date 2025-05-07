@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Jupyter/Lab notebooks related utils."""
+
 from pathlib import Path
 import subprocess as sp
 import itertools as it
@@ -46,7 +47,7 @@ def _find_path_content(path, pattern):
             try:
                 if pattern in p.read_text():
                     yield p
-            except:
+            except Exception:
                 pass
 
 
