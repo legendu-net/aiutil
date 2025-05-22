@@ -694,7 +694,7 @@ def filter(
     return _filter_num(path, pattern=pattern, num_lines=num_lines)
 
 
-def trace_dir_upwards(path: str | pathlib.Path, name: str) -> PosixPathPair:
+def trace_dir_upwards(path: str | Path, name: str) -> PosixPathPair:
     """Find the parent directory with the specified name.
 
     Args:
@@ -705,7 +705,7 @@ def trace_dir_upwards(path: str | pathlib.Path, name: str) -> PosixPathPair:
         A PosixPathPair which contains the parent directory 
         and the relative path to this parent directory.
     """
-    def _trace_dir_upwards(path: pathlib.Path) -> pathlib.Path:
+    def _trace_dir_upwards(path: Path) -> Path:
         while (stem := path.stem) != name:
             if not stem:
                 raise ValueError(f"The path {path} does not contain /{name}/!")
@@ -713,7 +713,7 @@ def trace_dir_upwards(path: str | pathlib.Path, name: str) -> PosixPathPair:
         return path
 
     if isinstance(path, str):
-        path = pathlib.Path(path)
+        path = Path(path)
     prefix = _trace_dir_upwards(path)
     return PosixPathPair(prefix, path.relative_to(prefix))
 
