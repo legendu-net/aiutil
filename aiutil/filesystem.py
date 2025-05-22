@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Filesystem related util functions."""
 
+from collections import namedtuple
 from typing import Iterable, Callable
 import itertools
 import os
@@ -18,6 +19,7 @@ from loguru import logger
 import dulwich.porcelain
 
 HOME = Path.home()
+PosixPathPair = namedtuple("PosixPathPair", ["prefix", "base"])
 
 
 def copy_if_exists(src: str, dst: str | Path = HOME) -> bool:
@@ -691,3 +693,28 @@ def filter(
     if sub_pattern:
         return _filter_sp(path, pattern=pattern, sub_pattern=sub_pattern)
     return _filter_num(path, pattern=pattern, num_lines=num_lines)
+
+
+def trace_dir_upwards(path: str | Path, name: str) -> PosixPathPair:
+    """Find the parent directory with the specified name.
+
+    Args:
+        path: A local path contains `/name/`.
+        name: The base name (stem) of the parent directory.
+
+    Returns:
+        A PosixPathPair which contains the parent directory
+        and the relative path to this parent directory.
+    """
+
+    def _trace_dir_upwards(path: Path) -> Path:
+        while (stem := path.stem) != name:
+            if not stem:
+                raise ValueError(f"The path {path} does not contain /{name}/!")
+            path = path.parent
+        return path
+
+    if isinstance(path, str):
+        path = Path(path)
+    prefix = _trace_dir_upwards(path)
+    return PosixPathPair(prefix, path.relative_to(prefix))

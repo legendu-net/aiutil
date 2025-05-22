@@ -14,7 +14,7 @@ resolution-markers = [
 
 [[package]]
 name = "aiutil"
-version = "0.83.0"
+version = "0.85.0"
 source = { editable = "." }
 dependencies = [
     { name = "dateparser" },
