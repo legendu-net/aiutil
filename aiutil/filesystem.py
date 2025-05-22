@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Filesystem related util functions."""
+
 from collections import namedtuple
 from typing import Iterable, Callable
 import itertools
@@ -702,9 +703,10 @@ def trace_dir_upwards(path: str | Path, name: str) -> PosixPathPair:
         name: The base name (stem) of the parent directory.
 
     Returns:
-        A PosixPathPair which contains the parent directory 
+        A PosixPathPair which contains the parent directory
         and the relative path to this parent directory.
     """
+
     def _trace_dir_upwards(path: Path) -> Path:
         while (stem := path.stem) != name:
             if not stem:
@@ -716,4 +718,3 @@ def trace_dir_upwards(path: str | Path, name: str) -> PosixPathPair:
         path = Path(path)
     prefix = _trace_dir_upwards(path)
     return PosixPathPair(prefix, path.relative_to(prefix))
-
