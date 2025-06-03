@@ -1,7 +1,9 @@
 {pkgs, ...}: {
   channel = "stable-24.11";
   packages = with pkgs; [
+    ncurses
     util-linux
+    clang
     file
     bash-completion
     gitui
