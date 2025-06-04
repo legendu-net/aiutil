@@ -1,8 +1,9 @@
 name: release
 on:
-  push:
-    tags:
-      - v*
+  release:
+    types: [published]
+  #push:
+  #  tags: ["v*"]
 jobs:
   release:
     name: Release
