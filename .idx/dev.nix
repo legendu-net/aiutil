@@ -27,13 +27,13 @@
       "ms-python.debugpy"
     ];
     workspace = {
-      #onCreate = {
-      #}
-      onStart = {
+      onCreate = {
         icon = ''
         curl -sSL https://raw.githubusercontent.com/legendu-net/icon/main/install_icon.sh | bash -s -- \
             -d ~/.local/bin
         '';
+      };
+      onStart = {
       };
     };
     # Enable previews and customize configuration
