@@ -14,7 +14,7 @@ This is a Python pacakage that contains misc utils for AI/ML.
     - `aiutil.cv`: some more tools (in addition to OpenCV) for image processing
     - `aiutil.shell`: parse command-line output to a pandas DataFrame
     - `aiutil.shebang`: auto correct SheBang of scripts
-    - `aiutil.poetry`: tools for making it even easier to manage Python project using Poetry
+    - `aiutil.pydev`: tools for making it even easier to manage Python project
     - `aiutil.pdf`: easy and flexible extracting of PDF pages
     - `aiutil.memory`: query and consume memory to a specified range
     - `aiutil.notebook`: Jupyter/Lab notebook related tools

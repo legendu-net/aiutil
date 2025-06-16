@@ -158,7 +158,7 @@ def _split_dir_1(
         path.rename(desdir / path.name)
 
 
-def find_images(root_dir: str | Path | list[str] | list[Path]) -> list[Path]:
+def find_images(root_dir: str | Path | list[str | Path]) -> list[Path]:
     """Find all PNG images in a (sequence) of dir(s) or its/their subdirs.
 
     :param root_dir: A (list) of dir(s).
