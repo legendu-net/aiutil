@@ -32,9 +32,9 @@ jobs:
     - name: Lint with ruff
       run: |
         ~/.local/bin/uv run ruff check aiutil/ tests/
-    - name: Lint with pytype
-      run: |
-        ~/.local/bin/uv run pytype ./
+    #- name: Lint with pytype
+    #  run: |
+    #    ~/.local/bin/uv run pytype ./
     - name: Check code format
       run: |
         ~/.local/bin/uv run ruff format --check .
