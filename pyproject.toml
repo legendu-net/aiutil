@@ -1,6 +1,6 @@
 [project]
 name = "aiutil"
-version = "0.87.0"
+version = "0.87.1"
 description = "A utils Python package for data scientists."
 authors = [{ name = "Benjamin Du", email = "longendu@yahoo.com" }]
 requires-python = ">=3.10,<3.14"
@@ -30,7 +30,6 @@ dependencies = [
     "paramiko>=3.2.0",
     "nbformat>=5.10.4",
     "nbconvert>=7.16.6",
-    "pdfplumber>=0.11.7",
 ]
 
 [project.optional-dependencies]
@@ -43,7 +42,10 @@ docker = [
     "networkx>=2.5",
     "requests>=2.20.0",
 ]
-pdf = ["pypdf>=3.16.1"]
+pdf = [
+    "pypdf>=3.16.1",
+    "pdfplumber>=0.11.7",
+]
 jupyter = [
     "nbformat>=5.0.7",
     "nbconvert>=5.6.1",
@@ -57,6 +59,7 @@ all = [
     "networkx>=2.5",
     "requests>=2.20.0",
     "pypdf>=3.16.1",
+    "pdfplumber>=0.11.7",
     "nbformat>=5.0.7",
     "nbconvert>=5.6.1",
     "black[jupyter]>=23.7.0",

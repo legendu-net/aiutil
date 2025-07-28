@@ -14,7 +14,7 @@ resolution-markers = [
 
 [[package]]
 name = "aiutil"
-version = "0.87.0"
+version = "0.87.1"
 source = { editable = "." }
 dependencies = [
     { name = "dateparser" },
@@ -27,7 +27,6 @@ dependencies = [
     { name = "pandas" },
     { name = "paramiko" },
     { name = "pathspec" },
-    { name = "pdfplumber" },
     { name = "pytest" },
     { name = "python-magic" },
     { name = "pyyaml" },
@@ -48,6 +47,7 @@ all = [
     { name = "nbformat" },
     { name = "networkx" },
     { name = "opencv-python" },
+    { name = "pdfplumber" },
     { name = "pillow" },
     { name = "psutil" },
     { name = "pypdf" },
@@ -68,6 +68,7 @@ jupyter = [
     { name = "nbformat" },
 ]
 pdf = [
+    { name = "pdfplumber" },
     { name = "pypdf" },
 ]
 
@@ -102,7 +103,8 @@ requires-dist = [
     { name = "pandas", specifier = ">=1.2.0" },
     { name = "paramiko", specifier = ">=3.2.0" },
     { name = "pathspec", specifier = ">=0.8.1" },
-    { name = "pdfplumber", specifier = ">=0.11.7" },
+    { name = "pdfplumber", marker = "extra == 'all'", specifier = ">=0.11.7" },
+    { name = "pdfplumber", marker = "extra == 'pdf'", specifier = ">=0.11.7" },
     { name = "pillow", marker = "extra == 'all'", specifier = ">=7.0.0" },
     { name = "pillow", marker = "extra == 'cv'", specifier = ">=7.0.0" },
     { name = "psutil", marker = "extra == 'admin'", specifier = ">=5.7.3" },
