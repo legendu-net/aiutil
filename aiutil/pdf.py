@@ -3,6 +3,7 @@
 import datetime
 from pathlib import Path
 import re
+import time
 from typing import Iterable
 from pypdf import PdfWriter, PdfReader
 import pdfplumber
@@ -61,32 +62,52 @@ def extract_text_first_page(path: str | Path) -> str:
         return page.extract_text()
 
 
-def _rename_puget_sound_energy(path: Path, text_first_page: str) -> Path:
+def _rename_puget_sound_energy(
+    path: Path, dir_dest: Path, text_first_page: str
+) -> Path:
     m = re.search(r"Issued: (\w+ \d{1,2}, \d{4})", text_first_page)
     date = datetime.datetime.strptime(m.group(1), "%B %d, %Y").strftime(FMT)
-    path_new = path.with_name(f"pse_{date}.pdf")
+    path_new = dir_dest / f"pse_{date}.pdf"
     path.rename(path_new)
     return path_new
 
 
-def _rename_bellevue_water(path: Path, text_first_page: str) -> Path:
+def _rename_bellevue_water(path: Path, dir_dest: Path, text_first_page: str) -> Path:
     m = re.search(r"Bill Date: (\d{1,2}/\d{1,2}/\d{4})", text_first_page)
     date = datetime.datetime.strptime(m.group(1), "%m/%d/%Y").strftime(FMT)
-    path_new = path.with_name(f"bellevue_water_{date}.pdf")
+    path_new = dir_dest / f"bellevue_water_{date}.pdf"
     path.rename(path_new)
     return path_new
 
 
-def rename_auto(path: str | Path) -> Path:
+def rename(pdf: str | Path, dir_dest: str | Path) -> Path:
     """Rename a PDF file automatically based on its content.
 
-    :param path: The path of the PDF file.
+    :param pdf: The path of the PDF file.
     :return: The path of the renamed PDF file.
     """
-    if isinstance(path, str):
-        path = Path(path)
-    text = extract_text_first_page(path)
+    if isinstance(pdf, str):
+        pdf = Path(pdf)
+    if isinstance(dir_dest, str):
+        dir_dest = Path(dir_dest)
+    text = extract_text_first_page(pdf)
     if "Puget Sound Energy" in text:
-        return _rename_puget_sound_energy(path, text)
+        return _rename_puget_sound_energy(pdf, dir_dest, text)
     if "MyUtilityBill.bellevuewa.gov" in text:
-        return _rename_bellevue_water(path, text)
+        return _rename_bellevue_water(pdf, dir_dest, text)
+
+
+def rename_dir(
+    dir_: str | Path, seconds_wait: float = 0.1, seconds_total: float = 3600
+):
+    if isinstance(dir_, str):
+        dir_ = Path(dir_)
+    dir_dest = dir_ / "_rename"
+    time_begin = time.time()
+    while True:
+        if time.time() - time_begin > seconds_total:
+            break
+        time.sleep(seconds_wait)
+        for path in dir_.iterdir():
+            if path.suffix.lower() == ".pdf":
+                rename(path, dir_dest)
