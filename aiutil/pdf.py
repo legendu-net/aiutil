@@ -3,6 +3,7 @@
 import datetime
 from pathlib import Path
 import re
+import time
 from typing import Iterable
 from pypdf import PdfWriter, PdfReader
 import pdfplumber
@@ -77,16 +78,37 @@ def _rename_bellevue_water(path: Path, text_first_page: str) -> Path:
     return path_new
 
 
-def rename_auto(path: str | Path) -> Path:
+def rename(pdf: str | Path) -> Path:
     """Rename a PDF file automatically based on its content.
 
-    :param path: The path of the PDF file.
+    :param pdf: The path of the PDF file.
     :return: The path of the renamed PDF file.
     """
-    if isinstance(path, str):
-        path = Path(path)
-    text = extract_text_first_page(path)
+    if isinstance(pdf, str):
+        pdf = Path(pdf)
+    text = extract_text_first_page(pdf)
+    pdf_new = pdf
     if "Puget Sound Energy" in text:
-        return _rename_puget_sound_energy(path, text)
-    if "MyUtilityBill.bellevuewa.gov" in text:
-        return _rename_bellevue_water(path, text)
+        pdf_new = _rename_puget_sound_energy(pdf, text)
+    elif "MyUtilityBill.bellevuewa.gov" in text:
+        pdf_new = _rename_bellevue_water(pdf, text)
+    print(f"{pdf} ==> {pdf_new}")
+    return pdf_new
+
+
+def rename_dir(
+    dir_: str | Path, seconds_wait: float = 0.1, seconds_total: float = 3600
+):
+    if isinstance(dir_, str):
+        dir_ = Path(dir_)
+    processed = set()
+    time_begin = time.time()
+    while True:
+        if time.time() - time_begin > seconds_total:
+            break
+        time.sleep(seconds_wait)
+        for path in dir_.iterdir():
+            if path in processed:
+                continue
+            if path.suffix.lower() == ".pdf":
+                processed.add(rename(path))

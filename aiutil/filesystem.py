@@ -718,3 +718,25 @@ def trace_dir_upwards(path: str | Path, name: str) -> PosixPathPair:
         path = Path(path)
     prefix = _trace_dir_upwards(path)
     return PosixPathPair(prefix, path.relative_to(prefix))
+
+
+def normalize_path_name(
+    path: str | Path, replacements: dict[str, str] | None = None
+) -> Path:
+    """Normalize the name of a path.
+
+    :param path: A path to be normalized.
+    :param replacements: A mapping of characters to replace.
+    """
+    if isinstance(path, str):
+        path = Path(path)
+    name = path.name
+    if replacements is None:
+        replacements = {
+            " ": "_",
+            "(": "_",
+            ")": "_",
+        }
+    path_new = path.with_name(name.translate(str.maketrans(replacements)))
+    path.rename(path_new)
+    return path_new
