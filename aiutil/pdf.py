@@ -62,25 +62,23 @@ def extract_text_first_page(path: str | Path) -> str:
         return page.extract_text()
 
 
-def _rename_puget_sound_energy(
-    path: Path, dir_dest: Path, text_first_page: str
-) -> Path:
+def _rename_puget_sound_energy(path: Path, text_first_page: str) -> Path:
     m = re.search(r"Issued: (\w+ \d{1,2}, \d{4})", text_first_page)
     date = datetime.datetime.strptime(m.group(1), "%B %d, %Y").strftime(FMT)
-    path_new = dir_dest / f"pse_{date}.pdf"
+    path_new = path.with_name(f"pse_{date}.pdf")
     path.rename(path_new)
     return path_new
 
 
-def _rename_bellevue_water(path: Path, dir_dest: Path, text_first_page: str) -> Path:
+def _rename_bellevue_water(path: Path, text_first_page: str) -> Path:
     m = re.search(r"Bill Date: (\d{1,2}/\d{1,2}/\d{4})", text_first_page)
     date = datetime.datetime.strptime(m.group(1), "%m/%d/%Y").strftime(FMT)
-    path_new = dir_dest / f"bellevue_water_{date}.pdf"
+    path_new = path.with_name(f"bellevue_water_{date}.pdf")
     path.rename(path_new)
     return path_new
 
 
-def rename(pdf: str | Path, dir_dest: str | Path) -> Path:
+def rename(pdf: str | Path) -> Path:
     """Rename a PDF file automatically based on its content.
 
     :param pdf: The path of the PDF file.
@@ -88,13 +86,14 @@ def rename(pdf: str | Path, dir_dest: str | Path) -> Path:
     """
     if isinstance(pdf, str):
         pdf = Path(pdf)
-    if isinstance(dir_dest, str):
-        dir_dest = Path(dir_dest)
     text = extract_text_first_page(pdf)
+    pdf_new = pdf
     if "Puget Sound Energy" in text:
-        return _rename_puget_sound_energy(pdf, dir_dest, text)
-    if "MyUtilityBill.bellevuewa.gov" in text:
-        return _rename_bellevue_water(pdf, dir_dest, text)
+        pdf_new = _rename_puget_sound_energy(pdf, text)
+    elif "MyUtilityBill.bellevuewa.gov" in text:
+        pdf_new = _rename_bellevue_water(pdf, text)
+    print(f"{pdf} ==> {pdf_new}")
+    return pdf_new
 
 
 def rename_dir(
@@ -102,12 +101,14 @@ def rename_dir(
 ):
     if isinstance(dir_, str):
         dir_ = Path(dir_)
-    dir_dest = dir_ / "_rename"
+    processed = set()
     time_begin = time.time()
     while True:
         if time.time() - time_begin > seconds_total:
             break
         time.sleep(seconds_wait)
         for path in dir_.iterdir():
+            if path in processed:
+                continue
             if path.suffix.lower() == ".pdf":
-                rename(path, dir_dest)
+                processed.add(rename(path))
