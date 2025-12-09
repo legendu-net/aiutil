@@ -26,11 +26,6 @@ This is a Python pacakage that contains misc utils for AI/ML.
         - An improved version of `spark_submit`.
         - Other misc PySpark functions. 
     
-## Supported Operating Systems and Python Versions
-
-Python 3.10.x on Linux and macOS.
-It might work on Windows but is not tested on Windows.
-
 ## Installation
 
 ```bash
@@ -41,3 +36,18 @@ Available additional components are `cv`, `docker`, `pdf`, `jupyter`, `admin` an
 ```bash
 pip3 install --user -U aiutil[all]
 ```
+
+## Executable Scripts
+
+- snb: Search for content in Jupyter notebooks.
+- logf: A Spark application log analyzing tool for identify root causes of failed Spark applications.
+- pyspark_submit: Makes it easy to run Scala/Python Spark job.
+- pykinit: Make it easier to authenticate users' personal accounts on Hadoop.
+- match_memory: Query and consume memory.
+
+You can run those executable scripts using uv 
+(so that you don't have to manually install this Python package)
+.
+For example,
+
+    uvx --from aiutil snb -h

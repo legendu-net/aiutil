@@ -71,7 +71,6 @@ Repository = "https://github.com/legendu-net/aiutil"
 
 [project.scripts]
 logf = "aiutil.hadoop:logf.main"
-repart_hdfs = "aiutil.hadoop:repart_hdfs.main"
 pyspark_submit = "aiutil.hadoop:pyspark_submit.main"
 pykinit = "aiutil.hadoop:kerberos.main"
 match_memory = "aiutil:memory.main"
