@@ -474,10 +474,10 @@ class LogFilter:
         return 10, line, "https://www.legendu.net/misc/tag/spark-issue.html"
 
     def _dedup_log_1(
-        self, kwd: str, lines: dict[str, int], dir_: Path | None
+        self, kwd: str, lines: dict[str, int], dir_: Path
     ) -> list[str]:
         deduper = LogDeduper(self._threshold)
-        lines = sorted(lines.items())
+        lines: list[tuple[str, int]] = sorted(lines.items())
         for line, idx in tqdm(lines):
             deduper.add(line, idx)
         # deduper.write(sys.stdout)

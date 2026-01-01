@@ -8,10 +8,6 @@ This is a Python pacakage that contains misc utils for Data Science.
     - pandas DataFrame
     - datetime
 2. Misc other tools
-    - git
-      ```
-      aiutil.git.check
-      ```
     - text manipulation
     - html
     - misc

@@ -86,6 +86,11 @@ dev = [
 [tool.ruff]
 exclude = ["tests/notebook/notebooks"]
 
+[tool.ty.src]
+exclude = [
+    "**/*.ipynb",
+]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
