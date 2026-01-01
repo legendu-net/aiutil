@@ -9,22 +9,8 @@ on:
 jobs:
   lint_code:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: 
-          - "3.12"
     steps:
-    - uses: actions/cache@v4
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
-    - uses: actions/checkout@v4
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
+    - uses: actions/checkout@v6
     - name: Install dependencies
       run: |
         curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -32,9 +18,9 @@ jobs:
     - name: Lint with ruff
       run: |
         ~/.local/bin/uv run ruff check aiutil/ tests/
-    #- name: Lint with pytype
-    #  run: |
-    #    ~/.local/bin/uv run pytype ./
+    - name: Lint with Ty
+      run: |
+        ~/.local/bin/uv run ty check
     - name: Check code format
       run: |
         ~/.local/bin/uv run ruff format --check .
