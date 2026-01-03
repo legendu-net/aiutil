@@ -95,7 +95,11 @@ class LogFilter:
         self._queue: deque = deque()
         self._output: Path = self._get_output(output)
         self._threshold: float = threshold
-        self._dump_by_keyword: bool = dump_by_keyword
+        self._dir_keyword: Path | None = (
+            self._output.parent / (self._log_file.stem + "_k")
+            if dump_by_keyword
+            else None
+        )
 
     def _get_output(self, output: str | Path) -> Path:
         """Get a valid output file.
@@ -183,29 +187,29 @@ class LogFilter:
         logger.info("Possible Error Lines have been dumped into {}", self._output)
 
     def filter(self) -> None:
-        """Filter informative liens from a Spark application log."""
+        """Filter informative lines from a Spark application log."""
         self._count_rows()
         self._scan_error_lines()
         self._dedup_log()
 
+    def _mkdir_keyword(self):
+        if self._dir_keyword:
+            self._dir_keyword.mkdir(parents=True, exist_ok=True)
+            logger.info(
+                "Error lines will be dumped by keyword into the directory {}.",
+                self._dir_keyword,
+            )
+
     def _dedup_log(self):
         print()
-        # create dir for dumping errors by keyword
-        if self._dump_by_keyword:
-            dir_ = self._output.parent / (self._log_file.stem + "_k")
-            dir_.mkdir(parents=True, exist_ok=True)
-            logger.info(
-                "Error lines will be dumped by keyword into the directory {}.", dir_
-            )
-        else:
-            dir_ = None
+        self._mkdir_keyword()
         # dedup error lines
         lines_unique = []
         for kwd, lines in self._lookup.items():
             if not lines:
                 continue
             logger.info('Deduplicating error lines corresponding to "{}" ...', kwd)
-            lines_unique.extend(self._dedup_log_1(kwd, lines, dir_))
+            lines_unique.extend(self._dedup_log_1(kwd, lines))
         lines_unique = [self._error_priority(line) for line in lines_unique]
         lines_unique.sort()
         with self._output.open("a", encoding="utf-8") as fout:
@@ -473,17 +477,15 @@ class LogFilter:
                 return priority, line, url
         return 10, line, "https://www.legendu.net/misc/tag/spark-issue.html"
 
-    def _dedup_log_1(
-        self, kwd: str, lines: dict[str, int], dir_: Path
-    ) -> list[str]:
+    def _dedup_log_1(self, kwd: str, lines: dict[str, int]) -> list[str]:
         deduper = LogDeduper(self._threshold)
         lines: list[tuple[str, int]] = sorted(lines.items())
         for line, idx in tqdm(lines):
             deduper.add(line, idx)
         # deduper.write(sys.stdout)
         # deduper.write(fout)
-        if self._dump_by_keyword:
-            with (dir_ / kwd).open("w") as fout_kwd:
+        if self._dir_keyword:
+            with (self._dir_keyword / kwd).open("w") as fout_kwd:
                 for line, idx in lines:
                     fout_kwd.write(f"L{idx}: {line}\n")
         return deduper.lines
