@@ -450,9 +450,7 @@ def _get_files(dir_: Path, exts: list[str]) -> Iterable[Path]:
             yield from _get_files(path, exts)
 
 
-def _has_header(
-    files: list[str | Path], num_files_checking: int = 5
-) -> bool:
+def _has_header(files: list[str | Path], num_files_checking: int = 5) -> bool:
     """Check whether the files have headers.
 
     :param files: the list of files to check.
@@ -460,7 +458,7 @@ def _has_header(
     :return: True if the files have headers and False otherwise.
     """
     # i: file index
-    for i,file in enumerate(files):
+    for i, file in enumerate(files):
         with open(file, "r", encoding="utf-8") as fin:
             first_line = fin.readline()
             if first_line:
@@ -480,9 +478,7 @@ def _has_header(
     return True
 
 
-def _merge_with_headers(
-    files: list[str | Path], output: str | Path = ""
-) -> None:
+def _merge_with_headers(files: list[str | Path], output: str | Path = "") -> None:
     """Merge files with headers. Keep only one header.
 
     :param files: A list of files
@@ -500,9 +496,7 @@ def _merge_with_headers(
                     out.write(line)
 
 
-def _merge_without_header(
-    files: list[str | Path], output: str | Path = ""
-) -> None:
+def _merge_without_header(files: list[str | Path], output: str | Path = "") -> None:
     """Merge files without header.
 
     :param files: A list of files

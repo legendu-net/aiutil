@@ -150,9 +150,7 @@ class SparkSubmit:
                         print(line)
                         stdout.append(line)
                 else:
-                    for (
-                        line
-                    ) in process.stderr.readlines():  # ty: ignore[possibly-missing-attribute]
+                    for line in process.stderr.readlines():  # ty: ignore[possibly-missing-attribute]
                         line = self._filter(
                             line.decode().rstrip(), time_begin, self._spark_log_filter
                         )
