@@ -112,7 +112,9 @@ class Notebook:
 
 
 def print_nb_cells(
-    nb_cells: tuple[tuple[Notebook, Cell], ...], num_notebooks: int, num_cells: int
+    nb_cells: tuple[tuple[Notebook, list[Cell]], ...],
+    num_notebooks: int,
+    num_cells: int,
 ):
     """Print cells of notebooks.
     :param nb_cells: Notebook cells to print.

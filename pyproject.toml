@@ -1,6 +1,6 @@
 [project]
 name = "aiutil"
-version = "0.89.0"
+version = "0.90.0"
 description = "A utils Python package for data scientists."
 authors = [{ name = "Benjamin Du", email = "longendu@yahoo.com" }]
 requires-python = ">=3.10,<4"
@@ -85,6 +85,11 @@ dev = [
 
 [tool.ruff]
 exclude = ["tests/notebook/notebooks"]
+
+[tool.ty.src]
+exclude = [
+    "**/*.ipynb",
+]
 
 [build-system]
 requires = ["hatchling"]

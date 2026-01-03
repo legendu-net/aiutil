@@ -258,17 +258,17 @@ def find_data_tables_sql(sql: str, filter_: Callable | None = None) -> set[str]:
     return set(table for table in tables if filter_(table))
 
 
-def is_empty(dir_: str | Path, filter_: Callable | None = lambda _: True) -> bool:
+def is_empty(dir_: str | Path, ignore: Callable = lambda _: False) -> bool:
     """Check whether a directory is empty.
 
     :param dir_: The directory to check.
-    :param filter_: A filtering function (default True always) to limit the check to sub files/dirs.
+    :param ignore: A lambda function defining paths to ignore.
     :return: True if the specified directory is empty and False otherwise.
     """
     if isinstance(dir_, str):
         dir_ = Path(dir_)
     paths = dir_.glob("**/*")
-    return not any(True for path in paths if filter_(path))
+    return not any(True for path in paths if not ignore(path))
 
 
 def _ignore(path: Path) -> bool:
@@ -450,9 +450,7 @@ def _get_files(dir_: Path, exts: list[str]) -> Iterable[Path]:
             yield from _get_files(path, exts)
 
 
-def has_header(
-    files: str | Path | list[str | Path], num_files_checking: int = 5
-) -> bool:
+def _has_header(files: list[str | Path], num_files_checking: int = 5) -> bool:
     """Check whether the files have headers.
 
     :param files: the list of files to check.
@@ -460,18 +458,18 @@ def has_header(
     :return: True if the files have headers and False otherwise.
     """
     # i: file index
-    for i in range(len(files)):
-        with open(files[i], "r", encoding="utf-8") as fin:
+    for i, file in enumerate(files):
+        with open(file, "r", encoding="utf-8") as fin:
             first_line = fin.readline()
             if first_line:
                 possible_header = first_line
                 break
     # k: current number of non-empty files
     k = 1
-    for j in range(i, len(files)):
+    for file in files[i:]:
         if k >= num_files_checking:
             break
-        with open(files[j], "r", encoding="utf-8") as fin:
+        with open(file, "r", encoding="utf-8") as fin:
             first_line = fin.readline()
             if first_line:
                 k += 1
@@ -480,9 +478,7 @@ def has_header(
     return True
 
 
-def _merge_with_headers(
-    files: str | Path | list[str | Path], output: str | Path = ""
-) -> None:
+def _merge_with_headers(files: list[str | Path], output: str | Path = "") -> None:
     """Merge files with headers. Keep only one header.
 
     :param files: A list of files
@@ -500,9 +496,7 @@ def _merge_with_headers(
                     out.write(line)
 
 
-def _merge_without_header(
-    files: str | Path | list[str | Path], output: str | Path = ""
-) -> None:
+def _merge_without_header(files: list[str | Path], output: str | Path = "") -> None:
     """Merge files without header.
 
     :param files: A list of files
@@ -536,7 +530,7 @@ def merge(
     if num_files_checking <= 0:
         num_files_checking = 5
     num_files_checking = min(num_files_checking, len(files))
-    if has_header(files, num_files_checking):
+    if _has_header(files, num_files_checking):
         _merge_with_headers(files, output)
         return
     _merge_without_header(files, output)

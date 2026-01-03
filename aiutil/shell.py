@@ -58,7 +58,7 @@ def to_frame(
 
     if not lines:
         lines = sp.check_output(cmd, shell=True).decode().strip().split("\n")
-    skip = _reg_skip(skip, len(lines))
+    skip: set[int] = _reg_skip(skip, len(lines))
     lines = [line for idx, line in enumerate(lines) if idx not in skip]
     if split_by_header:
         return _to_frame_title(split=split, lines=lines)
@@ -82,11 +82,11 @@ def _to_frame_space(
     """
     data = [re.split(split, line.strip()) for line in lines if line.strip()]
     if isinstance(header, int):
-        columns = [re.sub(r"\s+", "_", col.lower()) for col in data[header]]
+        columns: list[str] = [re.sub(r"\s+", "_", col.lower()) for col in data[header]]
         data = (row for idx, row in enumerate(data) if idx != header)
-        frame = pd.DataFrame(data, columns=columns)
+        frame = pd.DataFrame(data, columns=columns)  # ty: ignore[invalid-argument-type]
     elif isinstance(header, list):
-        frame = pd.DataFrame(data, columns=header)
+        frame = pd.DataFrame(data, columns=header)  # ty: ignore[invalid-argument-type]
     else:
         frame = pd.DataFrame(data)
     return frame.astype(str)

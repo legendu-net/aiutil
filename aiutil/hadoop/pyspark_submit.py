@@ -42,7 +42,7 @@ class SparkSubmit:
         self,
         line: str,
         keyword: str,
-        mutual_exclusive: list[str],
+        mutual_exclusive: Iterable[str],
         time_delta: datetime.timedelta,
     ) -> bool:
         if keyword not in line:
@@ -66,7 +66,7 @@ class SparkSubmit:
         mutual_exclusive: bool,
         time_delta: datetime.timedelta,
     ) -> bool:
-        mutual_exclusive = keywords if mutual_exclusive else ()
+        mutual_exclusive: Iterable[str] = keywords if mutual_exclusive else ()
         for keyword in keywords:
             if self._spark_log_filter_helper_keyword(
                 line=line,
@@ -144,17 +144,13 @@ class SparkSubmit:
         with sp.Popen(cmd, shell=True, stderr=sp.PIPE) as process:
             while True:
                 if process.poll() is None:
-                    # pytype: disable=attribute-error
-                    line = process.stderr.readline().decode().rstrip()
-                    # pytype: enable=attribute-error
+                    line = process.stderr.readline().decode().rstrip()  # ty: ignore[possibly-missing-attribute]
                     line = self._filter(line, time_begin, self._spark_log_filter)
                     if line:
                         print(line)
                         stdout.append(line)
                 else:
-                    for (
-                        line
-                    ) in process.stderr.readlines():  # pytype: disable=attribute-error
+                    for line in process.stderr.readlines():  # ty: ignore[possibly-missing-attribute]
                         line = self._filter(
                             line.decode().rstrip(), time_begin, self._spark_log_filter
                         )
@@ -185,10 +181,9 @@ class SparkSubmit:
                 if not isinstance(attachments, list):
                     attachments = list(attachments)
                 param["attachments"] = self._attach_txt(attachments)
-            notifiers.get_notifier("email").notify(**param)
+            notifiers.get_notifier("email").notify(raise_on_errors=False, **param)
         if status == "FAILED":
-            if self.email:
-                self._notify_log(app_id, "Re: " + subject)
+            self._notify_log(app_id, "Re: " + subject)
             return False
         return True
 
@@ -202,6 +197,8 @@ class SparkSubmit:
         return paths
 
     def _notify_log(self, app_id, subject):
+        if not self.email:
+            return
         logger.info("Waiting for 300 seconds for the log to be available...")
         time.sleep(300)
         sp.run(f"logf fetch {app_id}", shell=True, check=True)
