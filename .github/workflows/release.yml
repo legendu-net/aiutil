@@ -1,12 +1,10 @@
-name: release
+name: Release
 on:
-  #release:
-  #  types: [published]
-  push:
-    tags: ["v*"]
+  release:
+    types: [published]
 jobs:
   release:
-    name: Release
+    name: Release autil
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -28,4 +26,3 @@ jobs:
           prerelease: false
           files: |
             dist/*
-  
