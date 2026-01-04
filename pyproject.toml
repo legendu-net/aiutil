@@ -1,6 +1,6 @@
 [project]
 name = "aiutil"
-version = "0.90.0"
+version = "0.91.0"
 description = "A utils Python package for data scientists."
 authors = [{ name = "Benjamin Du", email = "longendu@yahoo.com" }]
 requires-python = ">=3.10,<4"
@@ -14,33 +14,23 @@ keywords = [
 ]
 dependencies = [
     "sqlparse>=0.4.1",
-    "pathspec>=0.8.1",
-    "dateparser>=0.7.1",
-    "numba>=0.53.0rc1.post1",
     "pandas>=1.2.0",
     "loguru>=0.3.2",
-    "toml>=0.10.0",
     "notifiers>=1.2.1",
     "PyYAML>=5.3.1",
     "python-magic>=0.4.0",
     "tqdm>=4.59.0",
-    "pytest>=3.0",
     "dulwich>=0.20.24",
     "scikit-image>=0.18.3",
-    "paramiko>=3.2.0",
     "nbformat>=5.10.4",
     "nbconvert>=7.16.6",
+    "numpy>=2.2.6",
 ]
 
 [project.optional-dependencies]
 cv = [
     "opencv-python>=4.0.0.0",
     "pillow>=7.0.0",
-]
-docker = [
-    "docker>=4.4.0",
-    "networkx>=2.5",
-    "requests>=2.20.0",
 ]
 pdf = [
     "pypdf>=3.16.1",
@@ -49,20 +39,16 @@ pdf = [
 jupyter = [
     "nbformat>=5.0.7",
     "nbconvert>=5.6.1",
-    "black[jupyter]>=23.7.0",
 ]
 admin = ["psutil>=5.7.3"]
 all = [
     "opencv-python>=4.0.0.0",
     "pillow>=7.0.0",
-    "docker>=4.4.0",
-    "networkx>=2.5",
     "requests>=2.20.0",
     "pypdf>=3.16.1",
     "pdfplumber>=0.11.7",
     "nbformat>=5.0.7",
     "nbconvert>=5.6.1",
-    "black[jupyter]>=23.7.0",
     "psutil>=5.7.3",
 ]
 
@@ -78,7 +64,9 @@ snb = "aiutil.notebook:search.main"
 
 [dependency-groups]
 dev = [
+    "deptry>=0.24.0",
     "pyright>=1.1.402",
+    "pytest>=9.0.2",
     "ruff>=0.11.8",
     "ty>=0.0.8",
 ]
@@ -90,6 +78,9 @@ exclude = ["tests/notebook/notebooks"]
 exclude = [
     "**/*.ipynb",
 ]
+
+[tool.deptry.package_module_name_map]
+opencv-python = "cv2"
 
 [build-system]
 requires = ["hatchling"]
