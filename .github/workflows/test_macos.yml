@@ -6,11 +6,9 @@ on:
     branches: [ dev, main ]
 jobs:
   test_code:
-    runs-on: ${{matrix.os}}
+    runs-on: macOS-latest
     strategy:
       matrix:
-        os: 
-          - macOS-latest
         python-version: 
           - "3.11"
           - "3.12"
@@ -18,18 +16,12 @@ jobs:
           - "3.14"
     steps:
     - uses: actions/checkout@v6
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
         curl -sSL https://raw.githubusercontent.com/legendu-net/icon/main/install_icon.sh | sudo bash -
         #icon docker -ic --user-to-docker ""
         curl -LsSf https://astral.sh/uv/install.sh | sh
         ~/.local/bin/uv sync
-        brew install libmagic
-        brew link libmagic
+        brew install libmagic && brew link libmagic
     - name: Test with pytest
-      run: |
-        ~/.local/bin/uv run pytest
+      run: uv run --python ${{ matrix.python-version }} pytest
