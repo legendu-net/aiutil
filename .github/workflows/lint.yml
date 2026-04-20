@@ -16,7 +16,7 @@ jobs:
         curl -LsSf https://astral.sh/uv/install.sh | sudo env UV_INSTALL_DIR="/usr/local/bin" sh
         uv sync --all-extras
     - name: Check pyproject.toml formatting
-      run: uv run pyproject-fmt --check
+      run: uv run pyproject-fmt --check pyproject.toml
     - name: Check code formatting
       run: uv run ruff format --check .
     - name: Lint with ruff
