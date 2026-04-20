@@ -1,0 +1,27 @@
+#!/usr/bin/env -S uv run
+#
+# /// script
+# requires-python = ">=3.12"
+# dependencies = [
+# ]
+# ///
+import argparse
+
+
+def parse_args(args=None, namespace=None):
+    parser = argparse.ArgumentParser(description="<DESCRIPTION>")
+    parser.add_argument("--arg1", dest="arg1", help="<DESCRIPTION>")
+    return parser.parse_args(args=args, namespace=namespace)
+
+
+def my_function(arg1: str) -> None:
+    pass
+
+
+def main():
+    args = parse_args()
+    my_function(args.arg1)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,87 +1,93 @@
+[build-system]
+build-backend = "hatchling.build"
+requires = [ "hatchling" ]
+
 [project]
 name = "aiutil"
-version = "0.91.0"
+version = "0.92.0"
 description = "A utils Python package for data scientists."
-authors = [{ name = "Benjamin Du", email = "longendu@yahoo.com" }]
-requires-python = ">=3.10,<4"
 readme = "README.md"
-license = "MIT"
 keywords = [
-    "AI",
-    "Machine Learning",
-    "tools",
-    "utils",
+  "AI",
+  "Machine Learning",
+  "tools",
+  "utils",
+]
+license = "MIT"
+authors = [ { name = "Benjamin Du", email = "longendu@yahoo.com" } ]
+requires-python = ">=3.10,<4"
+classifiers = [
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
-    "sqlparse>=0.4.1",
-    "pandas>=1.2.0",
-    "loguru>=0.3.2",
-    "notifiers>=1.2.1",
-    "PyYAML>=5.3.1",
-    "python-magic>=0.4.0",
-    "tqdm>=4.59.0",
-    "dulwich>=0.20.24",
-    "scikit-image>=0.18.3",
-    "nbformat>=5.10.4",
-    "nbconvert>=7.16.6",
-    "numpy>=2.2.6",
+  "dulwich>=0.20.24",
+  "loguru>=0.3.2",
+  "nbconvert>=7.16.6",
+  "nbformat>=5.10.4",
+  "notifiers>=1.2.1",
+  "numpy>=2.2.6",
+  "pandas>=1.2",
+  "python-magic>=0.4",
+  "pyyaml>=5.3.1",
+  "scikit-image>=0.18.3",
+  "sqlparse>=0.4.1",
+  "tqdm>=4.59",
 ]
-
-[project.optional-dependencies]
-cv = [
-    "opencv-python>=4.0.0.0",
-    "pillow>=7.0.0",
+optional-dependencies.admin = [ "psutil>=5.7.3" ]
+optional-dependencies.all = [
+  "nbconvert>=5.6.1",
+  "nbformat>=5.0.7",
+  "opencv-python>=4",
+  "pdfplumber>=0.11.7",
+  "pillow>=7",
+  "psutil>=5.7.3",
+  "pypdf>=3.16.1",
+  "requests>=2.20",
 ]
-pdf = [
-    "pypdf>=3.16.1",
-    "pdfplumber>=0.11.7",
+optional-dependencies.cv = [
+  "opencv-python>=4",
+  "pillow>=7",
 ]
-jupyter = [
-    "nbformat>=5.0.7",
-    "nbconvert>=5.6.1",
+optional-dependencies.jupyter = [
+  "nbconvert>=5.6.1",
+  "nbformat>=5.0.7",
 ]
-admin = ["psutil>=5.7.3"]
-all = [
-    "opencv-python>=4.0.0.0",
-    "pillow>=7.0.0",
-    "requests>=2.20.0",
-    "pypdf>=3.16.1",
-    "pdfplumber>=0.11.7",
-    "nbformat>=5.0.7",
-    "nbconvert>=5.6.1",
-    "psutil>=5.7.3",
+optional-dependencies.pdf = [
+  "pdfplumber>=0.11.7",
+  "pypdf>=3.16.1",
 ]
-
-[project.urls]
-Repository = "https://github.com/legendu-net/aiutil"
-
-[project.scripts]
-logf = "aiutil.hadoop:logf.main"
-pyspark_submit = "aiutil.hadoop:pyspark_submit.main"
-pykinit = "aiutil.hadoop:kerberos.main"
-match_memory = "aiutil:memory.main"
-snb = "aiutil.notebook:search.main"
+urls.Repository = "https://github.com/legendu-net/aiutil"
+scripts.add_gemini_command = "aiutil.gemini:add_custom_command.main"
+scripts.add_pyscript = "aiutil.pyscript:add_pyscript.main"
+scripts.logf = "aiutil.hadoop:logf.main"
+scripts.match_memory = "aiutil:memory.main"
+scripts.pykinit = "aiutil.hadoop:kerberos.main"
+scripts.pyspark_submit = "aiutil.hadoop:pyspark_submit.main"
+scripts.snb = "aiutil.notebook:search.main"
+scripts.uv_lint = "aiutil.pyscript:uv_lint.main"
 
 [dependency-groups]
 dev = [
-    "deptry>=0.24.0",
-    "pyright>=1.1.402",
-    "pytest>=9.0.2",
-    "ruff>=0.11.8",
-    "ty>=0.0.8",
+  "deptry>=0.24",
+  "pyproject-fmt>=2.21.1",
+  "pyright>=1.1.402",
+  "pytest>=9.0.2",
+  "ruff>=0.11.8",
+  "ty>=0.0.8",
 ]
 
 [tool.ruff]
-exclude = ["tests/notebook/notebooks"]
+exclude = [ "tests/notebook/notebooks" ]
 
-[tool.ty.src]
-exclude = [
-    "**/*.ipynb",
+[tool.deptry]
+package_module_name_map.opencv-python = "cv2"
+
+[tool.ty]
+src.exclude = [
+  "**/*.ipynb",
 ]
-
-[tool.deptry.package_module_name_map]
-opencv-python = "cv2"
-
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"

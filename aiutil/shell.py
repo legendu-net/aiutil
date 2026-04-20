@@ -84,9 +84,9 @@ def _to_frame_space(
     if isinstance(header, int):
         columns: list[str] = [re.sub(r"\s+", "_", col.lower()) for col in data[header]]
         data = (row for idx, row in enumerate(data) if idx != header)
-        frame = pd.DataFrame(data, columns=columns)  # ty: ignore[invalid-argument-type]
+        frame = pd.DataFrame(data, columns=columns)
     elif isinstance(header, list):
-        frame = pd.DataFrame(data, columns=header)  # ty: ignore[invalid-argument-type]
+        frame = pd.DataFrame(data, columns=header)
     else:
         frame = pd.DataFrame(data)
     return frame.astype(str)
