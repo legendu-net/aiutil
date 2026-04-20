@@ -69,6 +69,7 @@ scripts.match_memory = "aiutil:memory.main"
 scripts.pykinit = "aiutil.hadoop:kerberos.main"
 scripts.pyspark_submit = "aiutil.hadoop:pyspark_submit.main"
 scripts.snb = "aiutil.notebook:search.main"
+scripts.uv_lint = "aiutil.pyscript:uv_lint.main"
 
 [dependency-groups]
 dev = [
