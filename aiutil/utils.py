@@ -1,7 +1,6 @@
 """Miscellaneous utils."""
 
-from typing import Any, Sized, Callable
-import time
+from typing import Any, Sized
 
 
 def to_bool(value: Any) -> bool:

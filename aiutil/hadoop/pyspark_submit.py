@@ -144,13 +144,13 @@ class SparkSubmit:
         with sp.Popen(cmd, shell=True, stderr=sp.PIPE) as process:
             while True:
                 if process.poll() is None:
-                    line = process.stderr.readline().decode().rstrip()  # ty: ignore[possibly-missing-attribute]
+                    line = process.stderr.readline().decode().rstrip()  # ty: ignore[unresolved-attribute]
                     line = self._filter(line, time_begin, self._spark_log_filter)
                     if line:
                         print(line)
                         stdout.append(line)
                 else:
-                    for line in process.stderr.readlines():  # ty: ignore[possibly-missing-attribute]
+                    for line in process.stderr.readlines():  # ty: ignore[unresolved-attribute]
                         line = self._filter(
                             line.decode().rstrip(), time_begin, self._spark_log_filter
                         )
@@ -282,7 +282,7 @@ def _get_first_valid_file(key: str, files: list[str]) -> str:
 
 def _files_xml(files: Iterable[str]) -> list[str]:
     groups = [(key, list(val)) for key, val in it.groupby(files, os.path.basename)]
-    files = (_get_first_valid_file(key, files) for key, files in groups)
+    files = (_get_first_valid_file(key, files) for key, files in groups)  # ty: ignore[invalid-argument-type]
     return [file for file in files if file]
 
 
