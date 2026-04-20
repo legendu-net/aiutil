@@ -23,18 +23,3 @@ def to_bool(value: Any) -> bool:
     if isinstance(value, Sized) and len(value) > 0:
         return True
     return False
-
-
-def retry(task: Callable, times: int = 3, wait_seconds: float = 60):
-    """Retry a Docker API on failure (for a few times).
-    :param task: The task to run.
-    :param times: The total number of times to retry.
-    :param wait_seconds: The number of seconds to wait before retrying.
-    :return: The return result of the task.
-    """
-    for _ in range(1, times):
-        try:
-            return task()
-        except Exception:
-            time.sleep(wait_seconds)
-    return task()
