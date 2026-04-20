@@ -61,6 +61,8 @@ pyspark_submit = "aiutil.hadoop:pyspark_submit.main"
 pykinit = "aiutil.hadoop:kerberos.main"
 match_memory = "aiutil:memory.main"
 snb = "aiutil.notebook:search.main"
+add_gemini_command = "aiutil.gemini:add_custom_command.main"
+add_pyscript = "aiutil.pyscript:add_pyscript.main"
 
 [dependency-groups]
 dev = [
