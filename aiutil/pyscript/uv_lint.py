@@ -15,10 +15,18 @@ def parse_args(args=None, namespace=None):
         default=(),
         help="An (optional) list of Python scripts to lint.",
     )
+    parser.add_argument(
+        "--ty",
+        action="store_const",
+        const="ty",
+        default="pyright",
+        dest="type_checker",
+        help="Use ty as the type checker.",
+    )
     return parser.parse_args(args=args, namespace=namespace)
 
 
-def uv_lint(pyscripts: Iterable[str] | Iterable[Path]) -> None:
+def uv_lint(pyscripts: Iterable[str] | Iterable[Path], type_checker: str) -> None:
     plus35 = "+" * 35
     line = "\n\n" + plus35 + "{}" + plus35 + "\n"
     if Path("pyproject.toml").exists():
@@ -51,13 +59,20 @@ def uv_lint(pyscripts: Iterable[str] | Iterable[Path]) -> None:
             shell=True,
             check=True,
         )
-        print(line.format(" ty "))
-        sp.run(
-            # f"uv run --with ty --with-requirements '{pyscript}' ty check '{pyscript}'",
-            f"uv run --with pyright --with-requirements '{pyscript}' pyright '{pyscript}'",
-            shell=True,
-            check=True,
-        )
+        if type_checker == "ty":
+            print(line.format(" ty "))
+            sp.run(
+                f"uv run --with ty --with-requirements '{pyscript}' ty check '{pyscript}'",
+                shell=True,
+                check=True,
+            )
+        else:
+            print(line.format(" pyright "))
+            sp.run(
+                f"uv run --with pyright --with-requirements '{pyscript}' pyright '{pyscript}'",
+                shell=True,
+                check=True,
+            )
         if not re.search(r"^\s*def test_\w+\(", Path(pyscript).read_text()):
             continue
         print(line.format(" pytest "))
@@ -70,7 +85,7 @@ def uv_lint(pyscripts: Iterable[str] | Iterable[Path]) -> None:
 
 def main():
     args = parse_args()
-    uv_lint(args.pyscripts)
+    uv_lint(args.pyscripts, args.type_checker)
 
 
 if __name__ == "__main__":
