@@ -4,7 +4,7 @@ requires = [ "hatchling" ]
 
 [project]
 name = "aiutil"
-version = "0.92.0"
+version = "0.93.0"
 description = "A utils Python package for data scientists."
 readme = "README.md"
 keywords = [
@@ -15,10 +15,9 @@ keywords = [
 ]
 license = "MIT"
 authors = [ { name = "Benjamin Du", email = "longendu@yahoo.com" } ]
-requires-python = ">=3.10,<4"
+requires-python = ">=3.11,<4"
 classifiers = [
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
@@ -26,6 +25,7 @@ classifiers = [
 ]
 dependencies = [
   "dulwich>=0.20.24",
+  "github-rest-api>=0.33.1",
   "loguru>=0.3.2",
   "nbconvert>=7.16.6",
   "nbformat>=5.10.4",
@@ -63,6 +63,7 @@ optional-dependencies.pdf = [
 ]
 urls.Repository = "https://github.com/legendu-net/aiutil"
 scripts.add_gemini_command = "aiutil.gemini:add_custom_command.main"
+scripts.add_github_repo = "aiutil.pyscript:add_github_repo.main"
 scripts.add_pyscript = "aiutil.pyscript:add_pyscript.main"
 scripts.logf = "aiutil.hadoop:logf.main"
 scripts.match_memory = "aiutil:memory.main"
