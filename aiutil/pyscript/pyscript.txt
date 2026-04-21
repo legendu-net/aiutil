@@ -10,7 +10,8 @@ import argparse
 
 def parse_args(args=None, namespace=None):
     parser = argparse.ArgumentParser(description="<DESCRIPTION>")
-    parser.add_argument("--arg1", dest="arg1", help="<DESCRIPTION>")
+    parser.add_argument("arg1", help="<DESCRIPTION>")
+    parser.add_argument("--arg2", dest="arg2", help="<DESCRIPTION>")
     return parser.parse_args(args=args, namespace=namespace)
 
 

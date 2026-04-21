@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 def parse_args(args=None, namespace=None):
-    parser = argparse.ArgumentParser(description="Add a new Gemini command.")
+    parser = argparse.ArgumentParser(description="Add a Python script.")
     parser.add_argument("name", help="The name of the Python script.")
     parser.add_argument(
         "-d",

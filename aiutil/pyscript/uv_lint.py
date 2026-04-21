@@ -1,10 +1,3 @@
-#!/usr/bin/env -S uv run
-#
-# /// script
-# requires-python = ">=3.12"
-# dependencies = [
-# ]
-# ///
 import argparse
 from pathlib import Path
 import re
@@ -13,7 +6,7 @@ from typing import Iterable
 
 
 def parse_args(args=None, namespace=None):
-    parser = argparse.ArgumentParser(description="<DESCRIPTION>")
+    parser = argparse.ArgumentParser(description="Lint Python project or scripts using uv.")
     parser.add_argument(
         "pyscripts",
         nargs="*",
