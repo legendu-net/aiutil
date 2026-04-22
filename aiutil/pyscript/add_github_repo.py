@@ -1,6 +1,9 @@
 import argparse
 import os
+import shutil
+import subprocess as sp
 import sys
+import tempfile
 from pathlib import Path
 from dulwich import porcelain
 from github_rest_api import User, Organization
@@ -36,6 +39,14 @@ def parse_args(args=None, namespace=None):
         help="Whether to create the repository as public.",
     )
     parser.add_argument(
+        "-l",
+        "--lang",
+        "--language",
+        dest="language",
+        default="",
+        help="The language of the GitHub repository.",
+    )
+    parser.add_argument(
         "-d",
         "--dir",
         dest="dir",
@@ -59,7 +70,7 @@ def create_remote_repo(
 
 
 def add_github_repo(
-    repo: str, private: bool, is_owner_user: bool, dir_: str, token: str
+    repo: str, private: bool, language: str, is_owner_user: bool, dir_: str, token: str
 ) -> None:
     repo = repo.strip()
     create_remote_repo(
@@ -73,6 +84,8 @@ def add_github_repo(
     porcelain.init(path=path)
     porcelain.add(repo=path)
     porcelain.commit(repo=path, message="first commit")
+    # add GitHub Actions workflows
+    _add_workflow(path, language)
 
     def _create_push_branch(branch: str):
         porcelain.branch_create(repo=path, name=branch)
@@ -89,6 +102,33 @@ def add_github_repo(
     porcelain.branch_delete(repo=path, name="master")
 
 
+def _add_workflow(path: Path, language: str) -> None:
+    with tempfile.TemporaryDirectory() as dir_temp:
+        sp.run(
+            [
+                "git",
+                "clone",
+                "--depth",
+                "1",
+                "https://github.com/legendu-net/github_actions_scripts",
+                dir_temp,
+            ],
+            check=True,
+        )
+        dir_src: Path = Path(dir_temp)
+        dir_dest = path / ".github" / "workflows"
+        for yaml in dir_src.glob("*.yml"):
+            shutil.copy2(yaml, dir_dest)
+        # language specific workflows
+        if not language:
+            return
+        dir_src = dir_src / language
+        if not dir_src.exists():
+            return
+        for yaml in (dir_src / language).glob("*.yml"):
+            shutil.copy2(yaml, dir_dest)
+
+
 def main():
     args = parse_args()
     token = os.environ.get("GITHUB_TOKEN")
@@ -98,6 +138,7 @@ def main():
     add_github_repo(
         repo=args.repo,
         private=args.private,
+        language=args.language,
         is_owner_user=args.is_owner_user,
         dir_=args.dir,
         token=token,
