@@ -1,5 +1,14 @@
+from unittest.mock import patch
 import pytest
 from aiutil.pyscript.etc_sysctl import etc_sysctl
+
+
+@patch("subprocess.run")
+def test_etc_sysctl_apply(mock_run, tmp_path):
+    conf_file = tmp_path / "sysctl.conf"
+    etc_sysctl("vm.swappiness", "10", path=conf_file, apply=True)
+    assert conf_file.read_text() == "vm.swappiness = 10\n"
+    mock_run.assert_called_once_with(["sysctl", "-p", str(conf_file)], check=True)
 
 
 def test_etc_sysctl_invalid_value(tmp_path):
