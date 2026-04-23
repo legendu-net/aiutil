@@ -27,7 +27,7 @@ def parse_args(args=None, namespace=None):
     return parser.parse_args(args=args, namespace=namespace)
 
 
-def _write_lines(lines: list[str], path: Path, apply: bool):
+def _write_lines(lines: list[str], path: Path, apply: bool) -> None:
     with path.open("w", encoding="utf-8") as fout:
         fout.writelines(lines)
     if apply:
