@@ -1,6 +1,7 @@
 import argparse
 import re
 from pathlib import Path
+import subprocess as sp
 
 
 def parse_args(args=None, namespace=None):
@@ -17,6 +18,12 @@ def parse_args(args=None, namespace=None):
         help="The path to the sysctl configuration file.",
     )
     return parser.parse_args(args=args, namespace=namespace)
+
+
+def _write_lines(lines: list[str], path: Path):
+    with path.open("w", encoding="utf-8") as fout:
+        fout.writelines(lines)
+    sp.run(["sysctl", "-p", str(path)], check=True)
 
 
 def etc_sysctl(key: str, value: str, path: str | Path = "/etc/sysctl.conf") -> None:
@@ -47,12 +54,10 @@ def etc_sysctl(key: str, value: str, path: str | Path = "/etc/sysctl.conf") -> N
     for i, line in enumerate(lines):
         if pattern.match(line):
             lines[i] = f"{key} = {value}\n"
-            with path.open("w", encoding="utf-8") as fout:
-                fout.writelines(lines)
+            _write_lines(lines, path)
             return
     lines.append(f"{key} = {value}\n")
-    with path.open("w", encoding="utf-8") as fout:
-        fout.writelines(lines)
+    _write_lines(lines, path)
 
 
 def main():
