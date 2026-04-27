@@ -27,7 +27,7 @@ def add_custom_command(name: str, dir_: str) -> Path:
     if path.exists():
         print(f"The command {name} @ {path} already exists.\n")
     else:
-        path.write_text('description = ""\nprompt = """"""\n')
+        path.write_text('description = ""\nprompt = """\n"""\n')
         print(f"Created the command {name} @ {path}.\n")
     return path
 
