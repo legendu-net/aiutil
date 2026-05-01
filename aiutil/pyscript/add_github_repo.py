@@ -1,4 +1,5 @@
 import argparse
+import getpass
 import os
 import shutil
 import subprocess as sp
@@ -72,6 +73,14 @@ def create_remote_repo(
 def add_github_repo(
     repo: str, private: bool, language: str, is_owner_user: bool, dir_: str, token: str
 ) -> None:
+    token = token or os.getenv("GITHUB_TOKEN", "")
+    if not token:
+        token = getpass.getpass("Please enter your GitHub token: ")
+        if not token:
+            sys.exit(
+                "No GitHub token is provided (via $GITHUB_TOKEN, --token or at prompt)."
+            )
+    # remote git repo
     repo = repo.strip()
     create_remote_repo(
         repo=repo, private=private, token=token, is_owner_user=is_owner_user
@@ -131,17 +140,13 @@ def _add_workflow(path: Path, language: str) -> None:
 
 def main():
     args = parse_args()
-    token = os.environ.get("GITHUB_TOKEN")
-    if not token:
-        print("GITHUB_TOKEN environment variable not set.")
-        sys.exit(1)
     add_github_repo(
         repo=args.repo,
         private=args.private,
         language=args.language,
         is_owner_user=args.is_owner_user,
         dir_=args.dir,
-        token=token,
+        token=args.token,
     )
 
 
