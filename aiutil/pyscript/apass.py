@@ -7,6 +7,7 @@ import math
 from pathlib import Path
 import sys
 import time
+from typing import Iterable
 import pexpect
 import yaml
 
@@ -46,7 +47,8 @@ def _get_password(timeout: float) -> str:
     return passwd
 
 
-def _apass(command: str, passwd: str):
+def _apass(command: Iterable[str], passwd: str):
+    command = " ".join(command)
     prompts = _get_prompts()
     if not command:
         if not prompts:
@@ -71,8 +73,8 @@ def parse_args():
     )
     parser.add_argument(
         "command",
-        nargs="?",
-        default="",
+        nargs="*",
+        default=(),
         help="The command to execute (defaults to the first command in prompts configuration).",
     )
     return parser.parse_args()
