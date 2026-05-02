@@ -1,3 +1,5 @@
+"""Set or overwrite key-value pairs in a sysctl configuration file (e.g., /etc/sysctl.conf)."""
+
 import argparse
 import re
 from pathlib import Path

@@ -1,3 +1,5 @@
+"""Add a GitHub repository and initialize a local git repository with workflows."""
+
 import argparse
 import getpass
 import os
@@ -31,6 +33,13 @@ def parse_args(args=None, namespace=None):
         dest="is_owner_user",
         action="store_false",
         help="The owner of the repo is an organization.",
+    )
+    parser.add_argument(
+        "-t",
+        "--token",
+        dest="token",
+        default="",
+        help="The GitHub token to use.",
     )
     parser.add_argument(
         "-p",
