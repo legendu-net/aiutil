@@ -1,3 +1,5 @@
+"""Run commands without the need to enter password (repeatedly)."""
+
 import argparse
 import base64
 import datetime
@@ -59,6 +61,7 @@ def _apass(command: Iterable[str], passwd: str):
     if command not in prompts:
         sys.exit(f"Error: Prompt for command '{command}' not found in {PATH_PROMPTS}")
 
+    print("Auto filling password for the command", command)
     child = pexpect.spawn(command)
     child.logfile_read = sys.stdout.buffer
     child.expect(prompts[command])
