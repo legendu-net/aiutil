@@ -92,25 +92,26 @@ def _init_local_repo(repo: str, language: str, dir_: str, token: str) -> None:
     readme = path / "README.md"
     if not readme.exists():
         readme.write_text(f"# {repo_name}\n")
-    porcelain.init(path=path)
-    porcelain.add(repo=path)
-    porcelain.commit(repo=path, message="first commit")
+    if not (path / ".git").exists():
+        porcelain.init(path=path)
+        porcelain.add(repo=path)
+        porcelain.commit(repo=path, message="first commit")
+
+        def _create_push_branch(branch: str):
+            porcelain.branch_create(repo=path, name=branch)
+            porcelain.checkout(repo=path, target=branch)
+            porcelain.push(
+                repo=path,
+                remote_location=f"https://{token}@github.com/{repo}.git",
+            )
+
+        _create_push_branch("dev")
+        _create_push_branch("main")
+        porcelain.checkout(repo=path, target="dev")
+        porcelain.branch_delete(repo=path, name="main")
+        porcelain.branch_delete(repo=path, name="master")
     # add GitHub Actions workflows
     _add_workflow(path, language)
-
-    def _create_push_branch(branch: str):
-        porcelain.branch_create(repo=path, name=branch)
-        porcelain.checkout(repo=path, target=branch)
-        porcelain.push(
-            repo=path,
-            remote_location=f"https://{token}@github.com/{repo}.git",
-        )
-
-    _create_push_branch("dev")
-    _create_push_branch("main")
-    porcelain.checkout(repo=path, target="dev")
-    porcelain.branch_delete(repo=path, name="main")
-    porcelain.branch_delete(repo=path, name="master")
 
 
 def add_github_repo(
@@ -140,7 +141,8 @@ def _add_workflow(path: Path, language: str) -> None:
         dir_src: Path = Path(dir_temp)
         dir_dest = path / ".github" / "workflows"
         for yaml in dir_src.glob("*.yml"):
-            shutil.copy2(yaml, dir_dest)
+            if not (dir_dest / yaml.name).exists():
+                shutil.copy2(yaml, dir_dest)
         # language specific workflows
         if not language:
             return
@@ -148,7 +150,8 @@ def _add_workflow(path: Path, language: str) -> None:
         if not dir_src.exists():
             return
         for yaml in (dir_src / language).glob("*.yml"):
-            shutil.copy2(yaml, dir_dest)
+            if not (dir_dest / yaml.name).exists():
+                shutil.copy2(yaml, dir_dest)
 
 
 def main():
