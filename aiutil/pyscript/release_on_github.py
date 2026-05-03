@@ -62,7 +62,7 @@ def parse_args(args=None, namespace=None):
         "-b",
         "--branch",
         default="main",
-        help="The branch from which to make the release.",
+        help="The branch (default to main) from which to make the release.",
     )
     parser.add_argument(
         "-t",
