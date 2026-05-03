@@ -1,10 +1,9 @@
-"""Add a GitHub repository and initialize a local git repository with workflows."""
+"""Add a GitHub repository and initialize a local Git repository with workflows."""
 
 import argparse
 import getpass
 import os
 import shutil
-import subprocess as sp
 import sys
 import tempfile
 from pathlib import Path
@@ -60,45 +59,39 @@ def parse_args(args=None, namespace=None):
         "-d",
         "--dir",
         dest="dir",
-        default=".",
-        help="The directory within to create the local git repository.",
+        default="",
+        help="The directory of the local Git repository.",
     )
     return parser.parse_args(args=args, namespace=namespace)
 
 
-def create_remote_repo(
+def _create_remote_repo(
     repo: str, private: bool, token: str, is_owner_user: bool
 ) -> None:
-    owner, repo = repo.strip().split("/")
+    owner, r = repo.split("/")
     entity = (
         User(token=token, user=owner)
         if is_owner_user
         else Organization(token=token, org=owner)
     )
-    entity.create_repository(name=repo, private=private)
+    entity.create_repository(name=r, private=private)
     print(f"\nCreated the GitHub repo https://github.com/{repo}.\n")
 
 
-def add_github_repo(
-    repo: str, private: bool, language: str, is_owner_user: bool, dir_: str, token: str
-) -> None:
-    token = token or os.getenv("GITHUB_TOKEN", "")
-    if not token:
-        token = getpass.getpass("Please enter your GitHub token: ")
-        if not token:
-            sys.exit(
-                "No GitHub token is provided (via $GITHUB_TOKEN, --token or at prompt)."
-            )
-    # remote git repo
-    repo = repo.strip()
-    create_remote_repo(
-        repo=repo, private=private, token=token, is_owner_user=is_owner_user
-    )
-    # local git repo
-    name = repo.split("/")[-1]
-    path = Path(dir_) / name
+def _init_local_repo(repo: str, language: str, dir_: str, token: str) -> None:
+    """Initialize a local Git repository.
+
+    :param repo: The GitHub repo (in the format of owner/repo).
+    :param language: The language of the GitHub repository.
+    :param dir_: The directory of the local Git repository.
+    :param token: The GitHub token to use.
+    """
+    repo_name = repo.split("/")[-1]
+    path = Path(dir_) if dir_ else Path(repo_name)
     path.mkdir(parents=True, exist_ok=True)
-    (path / "README.md").write_text(f"# {name}\n")
+    readme = path / "README.md"
+    if not readme.exists():
+        readme.write_text(f"# {repo_name}\n")
     porcelain.init(path=path)
     porcelain.add(repo=path)
     porcelain.commit(repo=path, message="first commit")
@@ -120,18 +113,29 @@ def add_github_repo(
     porcelain.branch_delete(repo=path, name="master")
 
 
+def add_github_repo(
+    repo: str, private: bool, language: str, is_owner_user: bool, dir_: str, token: str
+) -> None:
+    token = token or os.getenv("GITHUB_TOKEN", "")
+    if not token:
+        token = getpass.getpass("Please enter your GitHub token: ")
+        if not token:
+            sys.exit(
+                "No GitHub token is provided (via $GITHUB_TOKEN, --token or at prompt)."
+            )
+    repo = repo.strip()
+    _create_remote_repo(
+        repo=repo, private=private, token=token, is_owner_user=is_owner_user
+    )
+    _init_local_repo(repo=repo, language=language, dir_=dir_, token=token)
+
+
 def _add_workflow(path: Path, language: str) -> None:
     with tempfile.TemporaryDirectory() as dir_temp:
-        sp.run(
-            [
-                "git",
-                "clone",
-                "--depth",
-                "1",
-                "https://github.com/legendu-net/github_actions_scripts",
-                dir_temp,
-            ],
-            check=True,
+        porcelain.clone(
+            "https://github.com/legendu-net/github_actions_scripts",
+            dir_temp,
+            depth=1,
         )
         dir_src: Path = Path(dir_temp)
         dir_dest = path / ".github" / "workflows"
