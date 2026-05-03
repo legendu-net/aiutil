@@ -15,7 +15,7 @@ resolution-markers = [
 
 [[package]]
 name = "aiutil"
-version = "0.95.0"
+version = "0.96.0"
 source = { editable = "." }
 dependencies = [
     { name = "dulwich" },
@@ -89,7 +89,7 @@ requires-dist = [
     { name = "pandas", specifier = ">=1.2" },
     { name = "pdfplumber", marker = "extra == 'all'", specifier = ">=0.11.7" },
     { name = "pdfplumber", marker = "extra == 'pdf'", specifier = ">=0.11.7" },
-    { name = "pexpect", specifier = ">=4.9.0" },
+    { name = "pexpect", specifier = ">=4.9" },
     { name = "pillow", marker = "extra == 'all'", specifier = ">=7" },
     { name = "pillow", marker = "extra == 'cv'", specifier = ">=7" },
     { name = "psutil", marker = "extra == 'admin'", specifier = ">=5.7.3" },
