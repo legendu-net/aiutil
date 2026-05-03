@@ -60,7 +60,7 @@ def parse_args(args=None, namespace=None):
         "--dir",
         dest="dir",
         default="",
-        help="The directory of the local Git repository.",
+        help="The directory (default to './repo') of the local Git repository.",
     )
     return parser.parse_args(args=args, namespace=namespace)
 
