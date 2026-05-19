@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(git mv *)",
-      "Bash([ -f \"/var/home/dclong/archives/aiutil/$entry\" ])"
-    ]
-  }
-}

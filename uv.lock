@@ -15,11 +15,10 @@ resolution-markers = [
 
 [[package]]
 name = "aiutil"
-version = "0.97.0"
+version = "0.98.0"
 source = { editable = "." }
 dependencies = [
     { name = "dulwich" },
-    { name = "github-rest-api" },
     { name = "loguru" },
     { name = "nbconvert" },
     { name = "nbformat" },
@@ -74,7 +73,6 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "dulwich", specifier = ">=0.20.24" },
-    { name = "github-rest-api", specifier = ">=0.33.1" },
     { name = "loguru", specifier = ">=0.3.2" },
     { name = "nbconvert", specifier = ">=7.16.6" },
     { name = "nbconvert", marker = "extra == 'all'", specifier = ">=5.6.1" },
@@ -490,20 +488,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/20/b5/23b216d9d985a956623b6bd12d4086b60f0059b27799f23016af04a74ea1/fastjsonschema-2.21.2.tar.gz", hash = "sha256:b1eb43748041c880796cd077f1a07c3d94e93ae84bba5ed36800a33554ae05de", size = 374130, upload-time = "2025-08-14T18:49:36.666Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/cb/a8/20d0723294217e47de6d9e2e40fd4a9d2f7c4b6ef974babd482a59743694/fastjsonschema-2.21.2-py3-none-any.whl", hash = "sha256:1c797122d0a86c5cace2e54bf4e819c36223b552017172f32c5c024a6b77e463", size = 24024, upload-time = "2025-08-14T18:49:34.776Z" },
-]
-
-[[package]]
-name = "github-rest-api"
-version = "0.33.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "dulwich" },
-    { name = "psutil" },
-    { name = "requests" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/c8/c4/c8ed5d965e0682e43a706fe3ee064520505ae9f60229867e179332a0f212/github_rest_api-0.33.1.tar.gz", hash = "sha256:1583530805847bbd9cdec90e8a3a772929a96df0920a8f2961cdf5656c456d1b", size = 41746, upload-time = "2026-04-20T23:25:35.805Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/ef/5c/2f01b57303c9c852f996c36dfd540d97d38d52762f43f03447e914c3115e/github_rest_api-0.33.1-py3-none-any.whl", hash = "sha256:ee9743459b5c250a992a83e62994646a83b616eaeb549f68fad90afc29e5061b", size = 12218, upload-time = "2026-04-20T23:25:36.963Z" },
 ]
 
 [[package]]

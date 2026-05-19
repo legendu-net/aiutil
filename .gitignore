@@ -1,16 +1,23 @@
-.DS_Store
-.vscode
-.theia
+# AI tools
+.claude/settings.local.json
+# IDE
+.vscode/
+.theia/
+# Python
 __pycache__/
 .ipynb_checkpoints/
 venv/
 .venv/
+# build artifacts
 target/
 dist/
+# lint tools
 .coverage
 .mypy/
 .pytype/
 .mypy_cache
+# misc
 *.crc
 *.egg-info/
 core.*
+.DS_Store
