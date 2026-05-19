@@ -1,3 +1,5 @@
 """A utils Python package for data scientists."""
 
-__version__ = "0.91.0"
+from importlib.metadata import version
+
+__version__ = version("aiutil")
