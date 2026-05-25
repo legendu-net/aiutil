@@ -1,9 +1,8 @@
 name: Run Tests
 on:
-  push:
-    branches: [ main ]
   pull_request:
-    branches: [ dev, main ]
+    branches:
+      - main
 jobs:
   test_code:
     runs-on: ${{matrix.os}}
@@ -22,8 +21,6 @@ jobs:
     - name: Install dependencies
       run: |
         if [[ "$(uname)" == *Darwin* ]]; then
-          #curl -sSL https://raw.githubusercontent.com/legendu-net/icon/main/install_icon.sh | sudo bash -
-          #icon docker -ic --user-to-docker ""
           brew install libmagic && brew link libmagic
         fi
         curl -LsSf https://astral.sh/uv/install.sh | sudo env UV_INSTALL_DIR="/usr/local/bin" sh
