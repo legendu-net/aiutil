@@ -49,7 +49,7 @@ def uv_lint(pyscripts: Iterable[str] | Iterable[Path], type_checker: str) -> Non
     if not pyscripts:
         pyscripts = Path().glob("**/*.py")
     for pyscript in pyscripts:
-        pyscript = str(pyscript)
+        pyscript = Path(pyscript)
         print(line.format(f" {pyscript} "))
         print(line.format(" ruff check "))
         sp.run(
