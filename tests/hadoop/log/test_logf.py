@@ -1,6 +1,7 @@
 """Test the aiutil.logf module."""
 
 from pathlib import Path
+
 import aiutil.hadoop.logf
 
 BASE_DIR = Path(__file__).parent

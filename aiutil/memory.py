@@ -1,11 +1,12 @@
 """Memory related utils."""
 
 import getpass
-import sys
 import math
-from collections import deque
+import sys
 import time
 from argparse import ArgumentParser, Namespace
+from collections import deque
+
 import numpy as np
 import psutil
 from loguru import logger

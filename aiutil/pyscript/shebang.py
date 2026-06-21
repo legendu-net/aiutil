@@ -1,7 +1,8 @@
 """Update shebang of Python scripts in a directory."""
 
-from pathlib import Path
 from argparse import ArgumentParser, Namespace
+from pathlib import Path
+
 from magic import Magic
 
 

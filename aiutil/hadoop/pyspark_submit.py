@@ -2,21 +2,22 @@
 # encoding: utf-8
 """A module makes it easy to run Scala/Python Spark job."""
 
-from typing import Callable, Any, Iterable
+import datetime
 import os
-import sys
-import itertools as it
-from argparse import Namespace, ArgumentParser
-from pathlib import Path
-import tempfile
+import re
 import shutil
 import subprocess as sp
-import re
+import sys
+import tempfile
 import time
-import datetime
+from argparse import ArgumentParser, Namespace
+from pathlib import Path
+from typing import Any, Callable, Iterable
+
+import notifiers
 import yaml
 from loguru import logger
-import notifiers
+
 import aiutil.filesystem as fs
 
 
@@ -142,17 +143,24 @@ class SparkSubmit:
         stdout = []
         self._spark_submit_log.clear()
         with sp.Popen(cmd, shell=True, stderr=sp.PIPE) as process:
+            assert process.stderr is not None
             while True:
                 if process.poll() is None:
-                    line = process.stderr.readline().decode().rstrip()  # ty: ignore[unresolved-attribute]
+                    line = (
+                        process.stderr.readline()
+                        .decode(encoding="utf-8", errors="replace")
+                        .rstrip()
+                    )
                     line = self._filter(line, time_begin, self._spark_log_filter)
                     if line:
                         print(line)
                         stdout.append(line)
                 else:
-                    for line in process.stderr.readlines():  # ty: ignore[unresolved-attribute]
+                    for line in process.stderr.readlines():
                         line = self._filter(
-                            line.decode().rstrip(), time_begin, self._spark_log_filter
+                            line.decode(encoding="utf-8", errors="replace").rstrip(),
+                            time_begin,
+                            self._spark_log_filter,
                         )
                         if line:
                             print(line)
@@ -281,9 +289,13 @@ def _get_first_valid_file(key: str, files: list[str]) -> str:
 
 
 def _files_xml(files: Iterable[str]) -> list[str]:
-    groups = [(key, list(val)) for key, val in it.groupby(files, os.path.basename)]
-    files = (_get_first_valid_file(key, files) for key, files in groups)  # ty: ignore[invalid-argument-type]
-    return [file for file in files if file]
+    groups: dict[str, list[str]] = {}
+    for file in files:
+        groups.setdefault(os.path.basename(file), []).append(file)
+    valid_files = (
+        _get_first_valid_file(key, group_files) for key, group_files in groups.items()
+    )
+    return [file for file in valid_files if file]
 
 
 def _files_non_xml(files: Iterable[str]) -> list[str]:

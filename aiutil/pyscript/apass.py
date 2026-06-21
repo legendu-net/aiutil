@@ -6,10 +6,11 @@ import datetime
 import getpass
 import json
 import math
-from pathlib import Path
 import sys
 import time
+from pathlib import Path
 from typing import Iterable
+
 import pexpect
 import yaml
 

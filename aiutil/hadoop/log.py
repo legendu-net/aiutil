@@ -1,13 +1,14 @@
 """Module for log filtering."""
 
-from typing import Sequence, TextIO
-from pathlib import Path
-import sys
 import re
+import sys
 from collections import deque
 from difflib import SequenceMatcher
-from tqdm import tqdm
+from pathlib import Path
+from typing import Sequence, TextIO
+
 from loguru import logger
+from tqdm import tqdm
 
 DASH_50 = "-" * 50
 DASH_100 = "-" * 100

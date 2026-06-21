@@ -1,7 +1,8 @@
 """PYPI related utils."""
 
-from typing import Set
 import re
+from typing import Set
+
 import requests
 
 

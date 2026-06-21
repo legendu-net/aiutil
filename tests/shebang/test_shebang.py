@@ -1,6 +1,8 @@
 import sys
 from pathlib import Path
+
 import pytest
+
 from aiutil.pyscript import shebang
 
 BASE_DIR = Path(__file__).parent

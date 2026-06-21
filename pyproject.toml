@@ -15,10 +15,9 @@ keywords = [
 ]
 license = "MIT"
 authors = [ { name = "Benjamin Du", email = "longendu@yahoo.com" } ]
-requires-python = ">=3.11,<4"
+requires-python = ">=3.12,<4"
 classifiers = [
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
@@ -86,6 +85,8 @@ dev = [
 
 [tool.ruff]
 exclude = [ "tests/notebook/notebooks" ]
+# select the 'I' rule set for import sorting
+lint.extend-select = [ "I" ]
 
 [tool.deptry]
 package_module_name_map.opencv-python = "cv2"

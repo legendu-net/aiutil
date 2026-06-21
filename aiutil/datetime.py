@@ -1,7 +1,8 @@
 """Date/time related utils."""
 
-from typing import Iterable
 import datetime
+from typing import Iterable
+
 import pandas as pd
 
 # import pysnooper

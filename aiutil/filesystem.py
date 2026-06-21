@@ -1,22 +1,23 @@
 #!/usr/bin/env python3
 """Filesystem related util functions."""
 
-from collections import namedtuple
-from typing import Iterable, Callable
 import itertools
+import math
 import os
-import sys
 import re
 import shutil
-import math
-from pathlib import Path
 import subprocess as sp
-from itertools import chain
+import sys
 import tempfile
-from tqdm import tqdm
+from collections import namedtuple
+from itertools import chain
+from pathlib import Path
+from typing import Callable, Iterable
+
+import dulwich.porcelain
 import pandas as pd
 from loguru import logger
-import dulwich.porcelain
+from tqdm import tqdm
 
 HOME = Path.home()
 PosixPathPair = namedtuple("PosixPathPair", ["prefix", "base"])

@@ -1,7 +1,7 @@
 import argparse
-from pathlib import Path
 import re
 import subprocess as sp
+from pathlib import Path
 from typing import Iterable
 
 
@@ -31,54 +31,103 @@ def uv_lint(pyscripts: Iterable[str] | Iterable[Path], type_checker: str) -> Non
     line = "\n\n" + plus35 + "{}" + plus35 + "\n"
     if Path("pyproject.toml").exists():
         print(line.format(" pyproject-fmt "))
-        sp.run("uv run pyproject-fmt pyproject.toml", shell=True, check=True)
+        sp.run(["uv", "run", "pyproject-fmt", "pyproject.toml"], check=True)
         print(line.format(" ruff check "))
-        sp.run("uv run ruff check", shell=True, check=True)
+        sp.run(
+            ["uv", "run", "ruff", "check", "--fix", "--exit-non-zero-on-fix"],
+            check=True,
+        )
         print(line.format(" ruff format "))
-        sp.run("uv run ruff format", shell=True, check=True)
+        sp.run(["uv", "run", "ruff", "format"], check=True)
         print(line.format(" ty "))
-        sp.run("uv run ty check", shell=True, check=True)
+        sp.run(["uv", "run", "ty", "check"], check=True)
         print(line.format(" deptry "))
-        sp.run("uv run deptry .", shell=True, check=True)
+        sp.run(["uv", "run", "deptry", "."], check=True)
         print(line.format(" pytest "))
-        sp.run("uv run pytest", shell=True, check=True)
+        sp.run(["uv", "run", "pytest"], check=True)
         return
     if not pyscripts:
         pyscripts = Path().glob("**/*.py")
     for pyscript in pyscripts:
+        pyscript = str(pyscript)
         print(line.format(f" {pyscript} "))
         print(line.format(" ruff check "))
         sp.run(
-            f"uv run --with ruff --with-requirements '{pyscript}' ruff check '{pyscript}'",
-            shell=True,
+            [
+                "uv",
+                "run",
+                "--with",
+                "ruff",
+                "--with-requirements",
+                pyscript,
+                "ruff",
+                "check",
+                pyscript,
+            ],
             check=True,
         )
         print(line.format(" ruff format "))
         sp.run(
-            f"uv run --with ruff --with-requirements '{pyscript}' ruff format '{pyscript}'",
-            shell=True,
+            [
+                "uv",
+                "run",
+                "--with",
+                "ruff",
+                "--with-requirements",
+                pyscript,
+                "ruff",
+                "format",
+                pyscript,
+            ],
             check=True,
         )
         if type_checker == "ty":
             print(line.format(" ty "))
             sp.run(
-                f"uv run --with ty --with-requirements '{pyscript}' ty check '{pyscript}'",
-                shell=True,
+                [
+                    "uv",
+                    "run",
+                    "--with",
+                    "ty",
+                    "--with-requirements",
+                    pyscript,
+                    "ty",
+                    "check",
+                    pyscript,
+                ],
                 check=True,
             )
         else:
             print(line.format(" pyright "))
             sp.run(
-                f"uv run --with pyright --with-requirements '{pyscript}' pyright '{pyscript}'",
-                shell=True,
+                [
+                    "uv",
+                    "run",
+                    "--with",
+                    "pyright",
+                    "--with-requirements",
+                    pyscript,
+                    "pyright",
+                    pyscript,
+                ],
                 check=True,
             )
-        if not re.search(r"^\s*def test_\w+\(", Path(pyscript).read_text()):
+        if not re.search(
+            r"^\s*def test_\w+\(", Path(pyscript).read_text(), re.MULTILINE
+        ):
             continue
         print(line.format(" pytest "))
         sp.run(
-            f"uv run --with pytest --with-requirements '{pyscript}' pytest check '{pyscript}'",
-            shell=True,
+            [
+                "uv",
+                "run",
+                "--with",
+                "pytest",
+                "--with-requirements",
+                pyscript,
+                "pytest",
+                pyscript,
+            ],
             check=True,
         )
 

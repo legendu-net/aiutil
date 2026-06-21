@@ -1,10 +1,12 @@
 """Script for fetch and filtering Spark application logs."""
 
-from pathlib import Path
 import re
-from argparse import ArgumentParser, Namespace
 import subprocess as sp
+from argparse import ArgumentParser, Namespace
+from pathlib import Path
+
 from loguru import logger
+
 from .log import LogFilter
 
 YARN = "/apache/hadoop/bin/yarn"

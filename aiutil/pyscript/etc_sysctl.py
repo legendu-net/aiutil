@@ -2,8 +2,8 @@
 
 import argparse
 import re
-from pathlib import Path
 import subprocess as sp
+from pathlib import Path
 
 
 def parse_args(args=None, namespace=None):

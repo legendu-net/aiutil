@@ -1,5 +1,7 @@
 from unittest.mock import patch
+
 import pytest
+
 from aiutil.pyscript.etc_sysctl import etc_sysctl
 
 
