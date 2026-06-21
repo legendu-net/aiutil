@@ -291,7 +291,7 @@ def _get_first_valid_file(key: str, files: list[str]) -> str:
 def _files_xml(files: Iterable[str]) -> list[str]:
     groups: dict[str, list[str]] = {}
     for file in files:
-        groups.setdefault(os.path.basename(file), []).append(file)
+        groups.setdefault(Path(file).name, []).append(file)
     valid_files = (
         _get_first_valid_file(key, group_files) for key, group_files in groups.items()
     )
