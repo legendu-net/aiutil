@@ -46,7 +46,7 @@ def _find_path_content(path, pattern):
     for p in path.glob("**/*"):
         if p.is_file():
             try:
-                if pattern in p.read_text():
+                if pattern in p.read_text(encoding="utf-8"):
                     yield p
             except Exception:
                 pass

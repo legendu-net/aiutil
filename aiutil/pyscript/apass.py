@@ -28,14 +28,14 @@ def _get_prompts() -> dict[str, str]:
         with PATH_PROMPTS.open("w") as fout:
             yaml.dump({}, fout, default_flow_style=False)
     # read prompts
-    with PATH_PROMPTS.open("r") as f:
+    with PATH_PROMPTS.open("r", encoding="utf-8") as f:
         prompts = yaml.safe_load(f) or {}
     return {k: v.format(USER=USER) for k, v in prompts.items()}
 
 
 def _get_password(timeout: float) -> str:
     if PATH_CONFIG.is_file():
-        token = json.loads(PATH_CONFIG.read_text())
+        token = json.loads(PATH_CONFIG.read_text(encoding="utf-8"))
         time_token = datetime.datetime.strptime(token["time"], FORMAT)
         if (datetime.datetime.now() - time_token).total_seconds() <= timeout:
             return base64.b64decode(token["password"]).decode()

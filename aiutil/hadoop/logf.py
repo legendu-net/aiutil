@@ -89,7 +89,7 @@ def status(args):
         Application Node Label Expression : {APP_NODE_LABEL}
         AM container Node Label Expression : {CON_NODE_LABEL}
     """
-    with args.log_file.open() as fin:
+    with args.log_file.open(encoding="utf-8", errors="ignore") as fin:
         for line in fin:
             if "{APP_ID}" in report:
                 match = re.search(r"(application_\d+_\d+)", line)

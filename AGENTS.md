@@ -1,4 +1,4 @@
-# Gemini Context: aiutil
+# AI Agent Context: aiutil
 
 This project is a comprehensive Python utility package designed for data scientists and AI/ML engineers. 
 It provides a wide range of helper functions and command-line tools 
@@ -9,7 +9,7 @@ to streamline common tasks in data processing, filesystem management, Hadoop/Spa
 - **Core Purpose:** To provide "misc utils for AI/ML", 
     including enhancements to Python's built-in functionalities and specialized tools for data science workflows.
 - **Main Technologies:**
-  - **Language:** Python (>=3.10, supports up to 3.14).
+  - **Language:** Python (>=3.12, supports up to 3.14).
   - **Environment Management:** [uv](https://github.com/astral-sh/uv) is used for dependency management and task execution.
   - **Build System:** [hatchling](https://hatch.pypa.io/).
   - **Key Libraries:** Pandas, NumPy, Loguru (logging), Tqdm (progress bars), Pytest, Ruff (linting/formatting).
