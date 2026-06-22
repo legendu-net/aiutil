@@ -25,7 +25,7 @@ FORMAT = "%Y-%m-%d %H:%M:%S.%f"
 def _get_prompts() -> dict[str, str]:
     if not PATH_PROMPTS.is_file():
         CONFIG_DIR.mkdir(parents=True, exist_ok=True)
-        with PATH_PROMPTS.open("w") as fout:
+        with PATH_PROMPTS.open("w", encoding="utf-8") as fout:
             yaml.dump({}, fout, default_flow_style=False)
     # read prompts
     with PATH_PROMPTS.open("r", encoding="utf-8") as f:
