@@ -1,13 +1,16 @@
 """Update shebang of Python scripts in a directory."""
 
-from pathlib import Path
 from argparse import ArgumentParser, Namespace
+from pathlib import Path
+
 from magic import Magic
 
 
 def _update_shebang(path: Path, shebang: str):
-    with path.open("r") as fin:
+    with path.open("r", encoding="utf-8") as fin:
         lines = fin.readlines()
+    if not lines:
+        return
     if lines[0].startswith("#!"):
         if "python" in lines[0]:
             lines[0] = shebang

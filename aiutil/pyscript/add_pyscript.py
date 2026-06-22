@@ -29,10 +29,10 @@ def add_pyscript(name: str, dir_: str) -> Path:
     else:
         text = (
             (Path(__file__).parent / "pyscript.txt")
-            .read_text()
+            .read_text(encoding="utf-8")
             .replace("my_function", name)
         )
-        path.write_text(text)
+        path.write_text(text, encoding="utf-8")
         print(f"Created the Python script {path}.\n")
     return path
 

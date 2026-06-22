@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """Search Jupyter/Lab notebooks."""
 
-from typing import TypeAlias, Sequence
 import json
-from pathlib import Path
-from collections import Counter
 from argparse import ArgumentParser, Namespace
+from collections import Counter
+from pathlib import Path
+from typing import Sequence, TypeAlias
+
 from loguru import logger
 
 Criterion: TypeAlias = str | list[str] | dict[str, list[str]]

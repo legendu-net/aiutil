@@ -6,10 +6,11 @@ import datetime
 import getpass
 import json
 import math
-from pathlib import Path
 import sys
 import time
+from pathlib import Path
 from typing import Iterable
+
 import pexpect
 import yaml
 
@@ -24,17 +25,17 @@ FORMAT = "%Y-%m-%d %H:%M:%S.%f"
 def _get_prompts() -> dict[str, str]:
     if not PATH_PROMPTS.is_file():
         CONFIG_DIR.mkdir(parents=True, exist_ok=True)
-        with PATH_PROMPTS.open("w") as fout:
+        with PATH_PROMPTS.open("w", encoding="utf-8") as fout:
             yaml.dump({}, fout, default_flow_style=False)
     # read prompts
-    with PATH_PROMPTS.open("r") as f:
+    with PATH_PROMPTS.open("r", encoding="utf-8") as f:
         prompts = yaml.safe_load(f) or {}
     return {k: v.format(USER=USER) for k, v in prompts.items()}
 
 
 def _get_password(timeout: float) -> str:
     if PATH_CONFIG.is_file():
-        token = json.loads(PATH_CONFIG.read_text())
+        token = json.loads(PATH_CONFIG.read_text(encoding="utf-8"))
         time_token = datetime.datetime.strptime(token["time"], FORMAT)
         if (datetime.datetime.now() - time_token).total_seconds() <= timeout:
             return base64.b64decode(token["password"]).decode()

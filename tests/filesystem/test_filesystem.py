@@ -1,6 +1,7 @@
 """Test dataframe.py."""
 
 from pathlib import Path
+
 import aiutil.filesystem
 
 BASE_DIR = Path(__file__).resolve().parent

@@ -1,6 +1,7 @@
 """Test the aiutil.logf module."""
 
 from pathlib import Path
+
 import aiutil.hadoop.logf
 
 BASE_DIR = Path(__file__).parent
@@ -19,6 +20,6 @@ def test_main():
     )
     aiutil.hadoop.logf.main(args)
     assert output.is_file()
-    text = output.read_text()
+    text = output.read_text(encoding="utf-8")
     assert "- Possible Error Lines -" in text
     assert "- Deduped Error Lines -" in text

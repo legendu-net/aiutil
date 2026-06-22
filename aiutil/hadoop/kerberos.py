@@ -6,19 +6,20 @@ If an user authenticate without specifying password,
 the saved password is used so that users do not have to type in password to authenticate every time.
 """
 
-from typing import Any
-import os
-from pathlib import Path
-import socket
+import base64
 import datetime
 import getpass
-import time
+import os
+import socket
 import subprocess as sp
-import base64
+import time
 from argparse import ArgumentParser, Namespace
+from pathlib import Path
+from typing import Any
+
+import notifiers
 import yaml
 from loguru import logger
-import notifiers
 
 HOME = Path.home()
 PROFILE = HOME / ".pykinit_profile"

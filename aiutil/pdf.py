@@ -1,12 +1,13 @@
 """Manipulating PDFs."""
 
 import datetime
-from pathlib import Path
 import re
 import time
+from pathlib import Path
 from typing import Iterable
-from pypdf import PdfWriter, PdfReader
+
 import pdfplumber
+from pypdf import PdfReader, PdfWriter
 
 FMT = "%Y%m%d"
 

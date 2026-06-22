@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Jupyter/Lab notebooks related utils."""
 
-from pathlib import Path
-import subprocess as sp
 import itertools as it
+import subprocess as sp
+from pathlib import Path
+
 import nbformat
 from nbconvert import HTMLExporter
 
@@ -45,7 +46,7 @@ def _find_path_content(path, pattern):
     for p in path.glob("**/*"):
         if p.is_file():
             try:
-                if pattern in p.read_text():
+                if pattern in p.read_text(encoding="utf-8"):
                     yield p
             except Exception:
                 pass

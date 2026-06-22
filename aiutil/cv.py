@@ -1,13 +1,14 @@
 """Computer vision related utils."""
 
-from typing import Iterable
 from pathlib import Path
-from tqdm import tqdm, trange
+from typing import Iterable
+
+import cv2
 import numpy as np
 import pandas as pd
-from PIL import Image
 import skimage
-import cv2
+from PIL import Image
+from tqdm import tqdm, trange
 
 
 def video_to_image(
