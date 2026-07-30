@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Filesystem related util functions."""
 
 import itertools
@@ -21,45 +20,6 @@ from tqdm import tqdm
 
 HOME = Path.home()
 PosixPathPair = namedtuple("PosixPathPair", ["prefix", "base"])
-
-
-def copy_if_exists(src: str, dst: str | Path = HOME) -> bool:
-    """Copy a file.
-    No exception is thrown if the source file does not exist.
-
-    :param src: The path of the source file.
-    :param dst: The path of the destination file.
-    :return: True if a copy if made, vice versa.
-    """
-    if not os.path.exists(src):
-        return False
-    try:
-        shutil.copy2(src, dst)
-        return True
-    except Exception:
-        return False
-
-
-def link_if_exists(
-    src: str, dst: str | Path = HOME, target_is_directory: bool = True
-) -> bool:
-    """Make a symbolic link of a file.
-    No exception is thrown if the source file does not exist.
-
-    :param src: The path of the source file.
-    :param dst: The path of the destination file.
-    :param target_is_directory: Whether the target is a directory.
-    :return: True if a symbolic link is created, vice versa.
-    """
-    if not os.path.exists(src):
-        return False
-    if os.path.exists(dst):
-        shutil.rmtree(dst)
-    try:
-        os.symlink(src, dst, target_is_directory=target_is_directory)
-        return True
-    except Exception:
-        return False
 
 
 def count_path(

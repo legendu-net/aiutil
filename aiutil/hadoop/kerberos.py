@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Make it easier to authenticate users' personal accounts on Hadoop.
 If an user specifiy a password when authenticating,
 the password is encrypted and saved into a profile that is readable/writable only by the user.
@@ -83,7 +82,10 @@ def authenticate(password: str, email: dict[str, str], user: str = "") -> None:
     :param user: User name. If empty, the current user name is used.
     """
     SUBJECT = "kinit: authentication {}"
-    MSG = f"kinit ({PID}): authentication on {HOST} ({HOST_IP}) {'{}'} at {datetime.datetime.now()}"
+    # Local time with an explicit UTC offset: it matches the host's other logs
+    # while staying unambiguous for a reader in a different timezone.
+    timestamp = datetime.datetime.now().astimezone()
+    MSG = f"kinit ({PID}): authentication on {HOST} ({HOST_IP}) {'{}'} at {timestamp}"
     try:
         process = sp.run(
             ["/usr/bin/kinit", user if user else USER],
@@ -173,6 +175,7 @@ def main() -> None:
 
     :raises ExceptionNoPassword: If no password is provided or found.
     """
+    logger.enable("aiutil")
     args = parse_args()
     if args.password:
         save_passwd(args.password)

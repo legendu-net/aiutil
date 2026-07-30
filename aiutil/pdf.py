@@ -70,7 +70,8 @@ def _rename_puget_sound_energy(path: Path, text_first_page: str) -> Path:
         raise RuntimeError(
             f"The pattern {pattern} is not found on the first page of the PDF bill."
         )
-    date = datetime.datetime.strptime(m.group(1), "%B %d, %Y").strftime(FMT)
+    # A bill date is a calendar date, not an instant; the timezone is irrelevant.
+    date = datetime.datetime.strptime(m.group(1), "%B %d, %Y").strftime(FMT)  # noqa: DTZ007
     path_new = path.with_name(f"pse_{date}.pdf")
     path.rename(path_new)
     return path_new
@@ -83,7 +84,8 @@ def _rename_bellevue_water(path: Path, text_first_page: str) -> Path:
         raise RuntimeError(
             f"The pattern {pattern} is not found on the first page of the PDF bill."
         )
-    date = datetime.datetime.strptime(m.group(1), "%m/%d/%Y").strftime(FMT)
+    # A bill date is a calendar date, not an instant; the timezone is irrelevant.
+    date = datetime.datetime.strptime(m.group(1), "%m/%d/%Y").strftime(FMT)  # noqa: DTZ007
     path_new = path.with_name(f"bellevue_water_{date}.pdf")
     path.rename(path_new)
     return path_new

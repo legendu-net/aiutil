@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Search Jupyter/Lab notebooks."""
 
 import json
@@ -302,6 +301,7 @@ def _subparse_search(subparsers):
 
 def main() -> None:
     """The main function of the script."""
+    logger.enable("aiutil")
     args = parse_args()
     args.func(args)
 
