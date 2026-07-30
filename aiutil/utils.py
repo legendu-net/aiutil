@@ -20,6 +20,4 @@ def to_bool(value: Any) -> bool:
         return False
     if isinstance(value, int) and value != 0:
         return True
-    if isinstance(value, Sized) and len(value) > 0:
-        return True
-    return False
+    return isinstance(value, Sized) and len(value) > 0

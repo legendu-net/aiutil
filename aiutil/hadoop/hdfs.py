@@ -204,7 +204,7 @@ class Hdfs:
         flag_recursive = "-r" if recursive else ""
         cmd = f"{self._bin} dfs -rm {flag_recursive} {flag_skip_trash} {path}"
         logger.info("Running command: {}. Might take a while.", cmd)
-        proc = sp.run(cmd, shell=True)  # pylint: disable=W1510
+        proc = sp.run(cmd, shell=True, check=False)
         return proc.returncode == 0
 
     def rm_robust(

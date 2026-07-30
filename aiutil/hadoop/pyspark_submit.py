@@ -108,7 +108,7 @@ class SparkSubmit:
             time_delta=datetime.timedelta(minutes=10),
         ):
             return True
-        if self._spark_log_filter_helper_keywords(
+        return self._spark_log_filter_helper_keywords(
             line=line,
             keywords=[
                 "final status: undefined",
@@ -117,9 +117,7 @@ class SparkSubmit:
             ],
             mutual_exclusive=True,
             time_delta=datetime.timedelta(minutes=3),
-        ):
-            return True
-        return False
+        )
 
     @staticmethod
     def _filter(line: str, time_begin, log_filter: Callable | None = None) -> str:
@@ -267,7 +265,7 @@ def _files(config: dict) -> str:
 def _file_exists(path: str) -> bool:
     if path.startswith("file://") and os.path.isfile(path[7:]):
         return True
-    if path.startswith("viewfs://") or path.startswith("hdfs://"):
+    if path.startswith(("viewfs://", "hdfs://")):
         process = sp.run(
             f"/apache/hadoop/bin/hdfs dfs -test -f {path}", shell=True, check=False
         )
@@ -410,12 +408,10 @@ def submit(args: Namespace) -> None:
         config["files"] = []
     config["files"].extend(args.files)
     config["files"] = _files(config)
-    if "archives" in config:
-        if isinstance(config["archives"], (list, tuple)):
-            config["archives"] = ",".join(config["archives"])
-    if "jars" in config:
-        if isinstance(config["jars"], (list, tuple)):
-            config["jars"] = ",".join(config["jars"])
+    if "archives" in config and isinstance(config["archives"], (list, tuple)):
+        config["archives"] = ",".join(config["archives"])
+    if "jars" in config and isinstance(config["jars"], (list, tuple)):
+        config["jars"] = ",".join(config["jars"])
     # submit Spark applications
     if _submit_local(args, config):
         _submit_cluster(args, config)

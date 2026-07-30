@@ -23,7 +23,7 @@ def _dep(pkg):
     deps = requests.get(url, timeout=10).json()["info"]["requires_dist"]
     if deps is None:
         return set()
-    return set(dep for dep in deps if "extra ==" not in dep)
+    return {dep for dep in deps if "extra ==" not in dep}
 
 
 def _dep_recur(pkg: str):

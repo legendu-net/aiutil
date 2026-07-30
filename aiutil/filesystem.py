@@ -240,7 +240,7 @@ def _find_data_tables_file(file, filter_, patterns) -> set[str]:
     tables = chain.from_iterable(re.findall(pattern, text) for pattern in patterns)
     mapping = str.maketrans("", "", "'\"\\")
     tables = (table.translate(mapping) for table in tables)
-    return set(table for table in tables if filter_(table))
+    return {table for table in tables if filter_(table)}
 
 
 def find_data_tables_sql(sql: str, filter_: Callable | None = None) -> set[str]:
@@ -256,7 +256,7 @@ def find_data_tables_sql(sql: str, filter_: Callable | None = None) -> set[str]:
     tables = (pms[1] for pms in re.findall(pattern, sql))
     if filter_ is None:
         return set(tables)
-    return set(table for table in tables if filter_(table))
+    return {table for table in tables if filter_(table)}
 
 
 def is_empty(dir_: str | Path, ignore: Callable = lambda _: False) -> bool:
@@ -276,16 +276,14 @@ def _ignore(path: Path) -> bool:
     path = path.resolve()
     if path.is_file() and path.name.startswith("."):
         return True
-    if path.is_dir() and path.name in (
+    return path.is_dir() and path.name in (
         ".jukit",
         ".ipynb_checkpoints",
         ".mypy_cache",
         ".pytest_cache",
         ".mtj.tmp",
         "__pycache__",
-    ):
-        return True
-    return False
+    )
 
 
 def remove_ess_empty(path: str | Path, ignore: Callable = _ignore) -> list[Path]:

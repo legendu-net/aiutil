@@ -11,9 +11,8 @@ def _update_shebang(path: Path, shebang: str):
         lines = fin.readlines()
     if not lines:
         return
-    if lines[0].startswith("#!"):
-        if "python" in lines[0]:
-            lines[0] = shebang
+    if lines[0].startswith("#!") and "python" in lines[0]:
+        lines[0] = shebang
     with path.open("w") as fout:
         fout.writelines(lines)
 

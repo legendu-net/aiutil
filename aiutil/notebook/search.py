@@ -6,11 +6,10 @@ from argparse import ArgumentParser, Namespace
 from collections import Counter
 from collections.abc import Sequence
 from pathlib import Path
-from typing import TypeAlias
 
 from loguru import logger
 
-Criterion: TypeAlias = str | list[str] | dict[str, list[str]]
+type Criterion = str | list[str] | dict[str, list[str]]
 
 
 def _reg_criterion(criterion: str | list[str] | dict[str, list[str]]):
