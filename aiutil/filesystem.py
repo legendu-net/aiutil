@@ -10,9 +10,9 @@ import subprocess as sp
 import sys
 import tempfile
 from collections import namedtuple
+from collections.abc import Callable, Iterable
 from itertools import chain
 from pathlib import Path
-from typing import Callable, Iterable
 
 import dulwich.porcelain
 import pandas as pd
@@ -73,7 +73,7 @@ def count_path(
     :return: A pandas Series with paths as index and frequencies of paths as value.
     """
 
-    def _count_path_helper(path: str, weight: int | float, freq: dict) -> None:
+    def _count_path_helper(path: str, weight: float, freq: dict) -> None:
         fields = path.rstrip("/").split("/")[:-1]
         path = ""
         for field in fields:

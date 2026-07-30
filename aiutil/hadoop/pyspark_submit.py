@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# encoding: utf-8
 """A module makes it easy to run Scala/Python Spark job."""
 
 import datetime
@@ -11,8 +10,9 @@ import sys
 import tempfile
 import time
 from argparse import ArgumentParser, Namespace
+from collections.abc import Callable, Iterable
 from pathlib import Path
-from typing import Any, Callable, Iterable
+from typing import Any
 
 import notifiers
 import yaml
@@ -373,7 +373,7 @@ def _submit_cluster(args, config: dict[str, Any]) -> bool:
     )
     lines = (
         [config["spark-submit"]]
-        + [f"--{opt} {config[opt]}" for opt in opts if opt in config and config[opt]]
+        + [f"--{opt} {config[opt]}" for opt in opts if config.get(opt)]
         + [f"--conf {k}={v}" for k, v in config["conf"].items()]
     )
     lines.extend(args.pyfile)

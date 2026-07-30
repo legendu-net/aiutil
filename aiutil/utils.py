@@ -1,6 +1,7 @@
 """Miscellaneous utils."""
 
-from typing import Any, Sized
+from collections.abc import Sized
+from typing import Any
 
 
 def to_bool(value: Any) -> bool:

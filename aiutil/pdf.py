@@ -3,8 +3,8 @@
 import datetime
 import re
 import time
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable
 
 import pdfplumber
 from pypdf import PdfReader, PdfWriter

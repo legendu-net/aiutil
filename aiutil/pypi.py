@@ -1,7 +1,6 @@
 """PYPI related utils."""
 
 import re
-from typing import Set
 
 import requests
 
@@ -33,7 +32,7 @@ def _dep_recur(pkg: str):
     return deps
 
 
-def _dep_recur_helper(pkg: str, deps: Set[str]):
+def _dep_recur_helper(pkg: str, deps: set[str]):
     for dep in _dep(pkg):
         dep = re.split(r" |;|\(|\[", dep, maxsplit=1)[0]
         if dep not in deps:

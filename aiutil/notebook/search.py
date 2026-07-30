@@ -4,8 +4,9 @@
 import json
 from argparse import ArgumentParser, Namespace
 from collections import Counter
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Sequence, TypeAlias
+from typing import TypeAlias
 
 from loguru import logger
 

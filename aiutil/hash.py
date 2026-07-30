@@ -38,7 +38,7 @@ def _rmd5(path: Path, res: list[str]) -> None:
             md5sum = hashlib.md5(path.read_bytes()).hexdigest()
         except Exception:
             md5sum = "FAILED!"
-        line = f"{str(path)}: {md5sum}"
+        line = f"{path!s}: {md5sum}"
         res.append(line)
         logger.info(line)
         return
@@ -46,6 +46,6 @@ def _rmd5(path: Path, res: list[str]) -> None:
         for p in path.iterdir():
             _rmd5(p, res)
     except Exception:
-        line = f"{str(path)}: FAILED!"
+        line = f"{path!s}: FAILED!"
         res.append(line)
         logger.info(line)

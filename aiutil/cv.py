@@ -1,7 +1,7 @@
 """Computer vision related utils."""
 
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable
 
 import cv2
 import numpy as np
