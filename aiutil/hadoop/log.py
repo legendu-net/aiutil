@@ -3,9 +3,10 @@
 import re
 import sys
 from collections import deque
+from collections.abc import Sequence
 from difflib import SequenceMatcher
 from pathlib import Path
-from typing import Sequence, TextIO
+from typing import TextIO
 
 from loguru import logger
 from tqdm import tqdm
@@ -50,8 +51,7 @@ class LogDeduper:
 
         :param fout: A file handler for outputing log.
         """
-        for line in self.lines:
-            fout.write(line)
+        fout.writelines(self.lines)
 
 
 class LogFilter:

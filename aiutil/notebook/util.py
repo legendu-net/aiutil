@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Jupyter/Lab notebooks related utils."""
 
 import itertools as it
@@ -6,6 +5,7 @@ import subprocess as sp
 from pathlib import Path
 
 import nbformat
+from loguru import logger
 from nbconvert import HTMLExporter
 
 HOME = Path.home()
@@ -34,6 +34,11 @@ def nbconvert_notebooks(root_dir: str | Path, cache: bool = False) -> None:
 
 
 def _get_jupyter_paths():
+    """Get the config, data and runtime paths used by Jupyter.
+
+    :return: A list of the absolute paths reported by the command
+        ``jupyter --path``.
+    """
     proc = sp.run("jupyter --path", shell=True, check=True, capture_output=True)
     lines = proc.stdout.decode().strip().split("\n")
     lines = (line.strip() for line in lines)
@@ -41,6 +46,15 @@ def _get_jupyter_paths():
 
 
 def _find_path_content(path, pattern):
+    """Find files under a directory whose content contains a pattern.
+
+    Files which cannot be read as UTF-8 text are skipped,
+    so that binary, unreadable or removed files do not stop the search.
+
+    :param path: The directory to search in.
+    :param pattern: The pattern to search for in the content of files.
+    :return: A generator of files whose content contains the pattern.
+    """
     if isinstance(path, str):
         path = Path(path)
     for p in path.glob("**/*"):
@@ -48,11 +62,23 @@ def _find_path_content(path, pattern):
             try:
                 if pattern in p.read_text(encoding="utf-8"):
                     yield p
-            except Exception:
-                pass
+            except UnicodeDecodeError:
+                # Binary files are expected while walking a directory tree,
+                # so skipping them is not worth a warning.
+                logger.debug("Skipped the non-text file {}.", p)
+            except OSError as err:
+                logger.warning("Failed to read the file {}: {}", p, err)
 
 
 def _find_path_path(path, pattern):
+    """Find paths under a directory whose name contains a pattern.
+
+    Both files and directories are searched.
+
+    :param path: The directory to search in.
+    :param pattern: The pattern to search for in path names.
+    :return: A generator of paths whose name contains the pattern.
+    """
     if isinstance(path, str):
         path = Path(path)
     for p in path.glob("**/*"):

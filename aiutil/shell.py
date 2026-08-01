@@ -2,8 +2,8 @@
 
 import re
 import subprocess as sp
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Sequence
 
 import pandas as pd
 
@@ -55,7 +55,7 @@ def to_frame(
     def _reg_skip(skip, n) -> set[int]:
         if isinstance(skip, int):
             skip = [skip]
-        return set(idx % n for idx in skip)
+        return {idx % n for idx in skip}
 
     if not lines:
         lines = sp.check_output(cmd, shell=True).decode().strip().split("\n")

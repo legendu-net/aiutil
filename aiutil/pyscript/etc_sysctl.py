@@ -49,12 +49,11 @@ def etc_sysctl(
     valid_values = {
         "kernel.perf_event_paranoid": ("-1", "0", "1", "2", "3"),
     }
-    if key in valid_values:
-        if value not in valid_values[key]:
-            raise ValueError(
-                f"Invalid value '{value}' for key '{key}'! "
-                f"Valid values are {valid_values[key]}."
-            )
+    if key in valid_values and value not in valid_values[key]:
+        raise ValueError(
+            f"Invalid value '{value}' for key '{key}'! "
+            f"Valid values are {valid_values[key]}."
+        )
     if isinstance(path, str):
         path = Path(path)
     if not path.exists():

@@ -29,14 +29,16 @@ def get_memory_usage(user: str = USER) -> int:
         psutil.STATUS_IDLE,
         psutil.STATUS_WAITING,
     )
-    try:
-        return sum(
-            p.memory_info().rss
-            for p in psutil.process_iter()
-            if p.username() == USER and p.status() in STATUS
-        )
-    except Exception:
-        return get_memory_usage(user)
+    total = 0
+    for p in psutil.process_iter():
+        try:
+            if p.username() == user and p.status() in STATUS:
+                total += p.memory_info().rss
+        except psutil.Error:
+            # The process ended or became inaccessible while being inspected,
+            # so it no longer contributes to the memory usage.
+            continue
+    return total
 
 
 def monitor_memory_usage(seconds: float = 1, user: str = USER):
@@ -126,6 +128,7 @@ def parse_args(args=None, namespace=None) -> Namespace:
 
 def main():
     """The main function for scripting usage."""
+    logger.enable("aiutil")
     args = parse_args()
     match_memory_usage(args.target)
 

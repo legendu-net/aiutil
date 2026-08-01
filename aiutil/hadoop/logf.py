@@ -228,6 +228,7 @@ def _subparser_filter(subparsers):
 
 def main(args: Namespace | None = None):
     """The main function for script usage."""
+    logger.enable("aiutil")
     if args is None:
         args = parse_args()
     args.func(args)

@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# encoding: utf-8
 """A module makes it easy to run Scala/Python Spark job."""
 
 import datetime
@@ -11,8 +9,9 @@ import sys
 import tempfile
 import time
 from argparse import ArgumentParser, Namespace
+from collections.abc import Callable, Iterable
 from pathlib import Path
-from typing import Any, Callable, Iterable
+from typing import Any
 
 import notifiers
 import yaml
@@ -24,19 +23,12 @@ import aiutil.filesystem as fs
 class SparkSubmit:
     """A class for submitting Spark jobs."""
 
-    def __init__(self, email: dict | None = None, level: str = "INFO"):
+    def __init__(self, email: dict | None = None):
         """Initialize a SparkSubmit instance.
 
         :param email: A dict object containing email information ("from", "to" and "host").
-        :param level: The logging level for loguru.
         """
-        # set up loguru with the right logging level
-        try:
-            logger.remove(0)
-        except Exception:
-            pass
-        logger.add(sys.stdout, level=level)
-        self._spark_submit_log = {}
+        self._spark_submit_log: dict[str, float] = {}
         self.email = email
 
     def _spark_log_filter_helper_keyword(
@@ -44,18 +36,35 @@ class SparkSubmit:
         line: str,
         keyword: str,
         mutual_exclusive: Iterable[str],
-        time_delta: datetime.timedelta,
+        min_interval_seconds: float,
     ) -> bool:
+        """Decide whether a log line containing the keyword should be kept.
+
+        Acts as a rate limiter: a keyword is kept at most once every
+        ``min_interval_seconds``.
+
+        :param line: A line of the Spark log.
+        :param keyword: The keyword to look for in the line.
+        :param mutual_exclusive: Keywords which cannot hold at the same time as
+            the given one. Their timers are backdated so that the next one to
+            appear is kept immediately rather than being throttled.
+        :param min_interval_seconds: The minimum number of seconds between two
+            kept occurrences of the keyword. 0 disables throttling.
+        :return: True if the line should be kept and False otherwise.
+        """
         if keyword not in line:
             return False
-        now = datetime.datetime.now()
+        # These timestamps are only ever compared against each other, so use a
+        # monotonic clock: a wall clock can jump backwards (DST, NTP) and stall
+        # the filter, silencing log output until the clock catches up.
+        now = time.monotonic()
         for kwd in mutual_exclusive:
             if kwd != keyword:
-                self._spark_submit_log[kwd] = now - time_delta * 2
+                self._spark_submit_log[kwd] = now - min_interval_seconds * 2
         if keyword not in self._spark_submit_log:
             self._spark_submit_log[keyword] = now
             return True
-        if now - self._spark_submit_log[keyword] >= time_delta:
+        if now - self._spark_submit_log[keyword] >= min_interval_seconds:
             self._spark_submit_log[keyword] = now
             return True
         return False
@@ -65,50 +74,68 @@ class SparkSubmit:
         line: str,
         keywords: list[str],
         mutual_exclusive: bool,
-        time_delta: datetime.timedelta,
+        min_interval_seconds: float,
     ) -> bool:
+        """Decide whether a log line containing any of the keywords should be kept.
+
+        :param line: A line of the Spark log.
+        :param keywords: The keywords to look for in the line.
+        :param mutual_exclusive: Whether the keywords cannot hold at the same
+            time, e.g., the possible states of a Spark application.
+        :param min_interval_seconds: The minimum number of seconds between two
+            kept occurrences of a keyword. 0 disables throttling.
+        :return: True if the line should be kept and False otherwise.
+        """
         mutual_exclusive: Iterable[str] = keywords if mutual_exclusive else ()
         for keyword in keywords:
             if self._spark_log_filter_helper_keyword(
                 line=line,
                 keyword=keyword,
                 mutual_exclusive=mutual_exclusive,
-                time_delta=time_delta,
+                min_interval_seconds=min_interval_seconds,
             ):
                 return True
         return False
 
     def _spark_log_filter(self, line: str) -> bool:
+        """Decide whether a line of the Spark log should be kept.
+
+        Spark repeats the same information over and over,
+        so each group of keywords is throttled with its own interval.
+
+        :param line: A line of the Spark log.
+        :return: True if the line should be kept and False otherwise.
+        """
         line = line.strip().lower()
         if self._spark_log_filter_helper_keywords(
             line=line,
             keywords=["warn client", "uploading"],
             mutual_exclusive=False,
-            time_delta=datetime.timedelta(seconds=0),
+            min_interval_seconds=0,
         ):
             return True
         if self._spark_log_filter_helper_keywords(
             line=line,
             keywords=["queue: ", "tracking url: "],
             mutual_exclusive=False,
-            time_delta=datetime.timedelta(days=1),
+            min_interval_seconds=24 * 60 * 60,
         ):
             return True
         if self._spark_log_filter_helper_keywords(
             line=line,
             keywords=["exception", "user class threw", "caused by"],
             mutual_exclusive=False,
-            time_delta=datetime.timedelta(seconds=1),
+            min_interval_seconds=1,
         ):
             return True
         if self._spark_log_filter_helper_keywords(
             line=line,
             keywords=["state: accepted", "state: running", "state: finished"],
             mutual_exclusive=True,
-            time_delta=datetime.timedelta(minutes=10),
+            min_interval_seconds=10 * 60,
         ):
             return True
-        if self._spark_log_filter_helper_keywords(
+        return self._spark_log_filter_helper_keywords(
             line=line,
             keywords=[
                 "final status: undefined",
@@ -116,18 +143,30 @@ class SparkSubmit:
                 "final status: failed",
             ],
             mutual_exclusive=True,
-            time_delta=datetime.timedelta(minutes=3),
-        ):
-            return True
-        return False
+            min_interval_seconds=3 * 60,
+        )
 
     @staticmethod
-    def _filter(line: str, time_begin, log_filter: Callable | None = None) -> str:
+    def _filter(
+        line: str, time_begin: float, log_filter: Callable | None = None
+    ) -> str:
+        """Filter a line of the Spark log, annotating it with the elapsed time.
+
+        :param line: A line of the Spark log.
+        :param time_begin: The :func:`time.monotonic` reading taken when the
+            Spark job was submitted.
+        :param log_filter: A function deciding whether a line should be kept.
+            If None, every non-empty line is kept.
+        :return: The line to print, annotated with the elapsed time if it
+            reports a state or a final status, or an empty string if the line
+            is filtered out.
+        """
         if not line:
             return ""
         if log_filter is None or log_filter(line):
             if "final status:" in line or " (state: " in line:
-                line = line + f" (Time elapsed: {datetime.datetime.now() - time_begin})"
+                elapsed = datetime.timedelta(seconds=time.monotonic() - time_begin)
+                line = line + f" (Time elapsed: {elapsed})"
             return line
         return ""
 
@@ -138,7 +177,7 @@ class SparkSubmit:
         :param attachments: Attachments to send with the notification email.
         :return: True if the Spark application succeeds and False otherwise.
         """
-        time_begin = datetime.datetime.now()
+        time_begin = time.monotonic()
         logger.info("Submitting Spark job ...\n{}", cmd)
         stdout = []
         self._spark_submit_log.clear()
@@ -197,6 +236,11 @@ class SparkSubmit:
 
     @staticmethod
     def _attach_txt(attachments: list[str]) -> list[str]:
+        """Copy attachments into a temporary directory, appending .txt to each name.
+
+        :param attachments: Paths of the files to attach.
+        :return: Paths of the copied files.
+        """
         dir_ = Path(tempfile.mkdtemp())
         paths = (dir_ / (Path(attach).name + ".txt") for attach in attachments)
         paths = [str(path) for path in paths]
@@ -205,6 +249,16 @@ class SparkSubmit:
         return paths
 
     def _notify_log(self, app_id, subject):
+        """Email the deduped error lines of a failed Spark application.
+
+        Waits for the log to become available, fetches it using the ``logf``
+        command and extracts the deduped error lines.
+        Does nothing if no email is configured.
+
+        :param app_id: The application ID of the Spark application.
+        :param subject: The subject of the original notification email.
+            The reply is sent with "Re: " prepended to it.
+        """
         if not self.email:
             return
         logger.info("Waiting for 300 seconds for the log to be available...")
@@ -265,9 +319,15 @@ def _files(config: dict) -> str:
 
 
 def _file_exists(path: str) -> bool:
+    """Check whether a file exists locally or on HDFS.
+
+    :param path: A path prefixed with the file://, viewfs:// or hdfs:// scheme.
+        A path with any other scheme is treated as non-existent.
+    :return: True if the file exists and False otherwise.
+    """
     if path.startswith("file://") and os.path.isfile(path[7:]):
         return True
-    if path.startswith("viewfs://") or path.startswith("hdfs://"):
+    if path.startswith(("viewfs://", "hdfs://")):
         process = sp.run(
             f"/apache/hadoop/bin/hdfs dfs -test -f {path}", shell=True, check=False
         )
@@ -277,6 +337,12 @@ def _file_exists(path: str) -> bool:
 
 
 def _get_first_valid_file(key: str, files: list[str]) -> str:
+    """Get the first file which exists among a list of candidates.
+
+    :param key: The name of the configuration file, used for logging.
+    :param files: Candidate paths of the configuration file.
+    :return: The first path which exists, or an empty string if none does.
+    """
     for file in files:
         if _file_exists(file):
             return file
@@ -289,6 +355,14 @@ def _get_first_valid_file(key: str, files: list[str]) -> str:
 
 
 def _files_xml(files: Iterable[str]) -> list[str]:
+    """Pick one existing path for each distinct XML configuration file name.
+
+    Paths are grouped by file name so that alternative locations of the same
+    configuration file can be specified, the first existing one being used.
+
+    :param files: Paths of XML configuration files.
+    :return: A list containing at most one existing path per file name.
+    """
     groups: dict[str, list[str]] = {}
     for file in files:
         groups.setdefault(Path(file).name, []).append(file)
@@ -299,6 +373,11 @@ def _files_xml(files: Iterable[str]) -> list[str]:
 
 
 def _files_non_xml(files: Iterable[str]) -> list[str]:
+    """Keep the non-XML files which exist, warning about those which do not.
+
+    :param files: Paths of non-XML files.
+    :return: A list of the paths which exist.
+    """
     res = []
     for file in files:
         if _file_exists(file):
@@ -309,6 +388,14 @@ def _files_non_xml(files: Iterable[str]) -> list[str]:
 
 
 def _python(config: dict) -> str:
+    """Find the local Python executable to run the Spark job with.
+
+    :param config: A dict object containing configurations.
+        The field python-local specifies the candidate executables;
+        python3 and python are tried if it is not defined.
+    :return: The path of the first valid Python executable.
+    :raises ValueError: If none of the candidates is a valid executable.
+    """
     if "python-local" not in config:
         bins = ["python3", "python"]
     else:
@@ -324,6 +411,14 @@ def _python(config: dict) -> str:
 
 
 def _submit_local(args, config: dict[str, Any]) -> bool:
+    """Submit the Spark job to the local machine.
+
+    :param args: A Namespace object containing parsed command-line options.
+    :param config: A dict object containing configurations.
+    :return: True if the local run succeeds, or if it is skipped because the
+        field spark-submit-local is not defined, and False otherwise.
+    :raises ValueError: If the configured spark-submit-local does not exist.
+    """
     spark_submit = config.get("spark-submit-local", "")
     if not spark_submit:
         return True
@@ -353,6 +448,14 @@ def _submit_local(args, config: dict[str, Any]) -> bool:
 
 
 def _submit_cluster(args, config: dict[str, Any]) -> bool:
+    """Submit the Spark job to the cluster.
+
+    :param args: A Namespace object containing parsed command-line options.
+    :param config: A dict object containing configurations.
+    :return: True if the Spark application succeeds, or if it is skipped
+        because the field spark-submit is not defined, and False otherwise.
+    :raises ValueError: If the configured spark-submit does not exist.
+    """
     spark_submit = config.get("spark-submit", "")
     if not spark_submit:
         logger.warning("The filed spark-submit is not defined!")
@@ -373,7 +476,7 @@ def _submit_cluster(args, config: dict[str, Any]) -> bool:
     )
     lines = (
         [config["spark-submit"]]
-        + [f"--{opt} {config[opt]}" for opt in opts if opt in config and config[opt]]
+        + [f"--{opt} {config[opt]}" for opt in opts if config.get(opt)]
         + [f"--conf {k}={v}" for k, v in config["conf"].items()]
     )
     lines.extend(args.pyfile)
@@ -410,12 +513,10 @@ def submit(args: Namespace) -> None:
         config["files"] = []
     config["files"].extend(args.files)
     config["files"] = _files(config)
-    if "archives" in config:
-        if isinstance(config["archives"], (list, tuple)):
-            config["archives"] = ",".join(config["archives"])
-    if "jars" in config:
-        if isinstance(config["jars"], (list, tuple)):
-            config["jars"] = ",".join(config["jars"])
+    if "archives" in config and isinstance(config["archives"], (list, tuple)):
+        config["archives"] = ",".join(config["archives"])
+    if "jars" in config and isinstance(config["jars"], (list, tuple)):
+        config["jars"] = ",".join(config["jars"])
     # submit Spark applications
     if _submit_local(args, config):
         _submit_cluster(args, config)
@@ -479,6 +580,10 @@ def parse_args(args=None, namespace=None) -> Namespace:
 
 def main():
     """Define a main function."""
+    # Send logs to stdout so that they interleave with the Spark output printed
+    # by SparkSubmit.submit, keeping a redirected run complete and in order.
+    logger.configure(handlers=[{"sink": sys.stdout, "level": "INFO"}])
+    logger.enable("aiutil")
     args = parse_args()
     submit(args)
 

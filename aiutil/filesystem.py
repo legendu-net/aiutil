@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Filesystem related util functions."""
 
 import itertools
@@ -10,9 +9,9 @@ import subprocess as sp
 import sys
 import tempfile
 from collections import namedtuple
+from collections.abc import Callable, Iterable
 from itertools import chain
 from pathlib import Path
-from typing import Callable, Iterable
 
 import dulwich.porcelain
 import pandas as pd
@@ -21,45 +20,6 @@ from tqdm import tqdm
 
 HOME = Path.home()
 PosixPathPair = namedtuple("PosixPathPair", ["prefix", "base"])
-
-
-def copy_if_exists(src: str, dst: str | Path = HOME) -> bool:
-    """Copy a file.
-    No exception is thrown if the source file does not exist.
-
-    :param src: The path of the source file.
-    :param dst: The path of the destination file.
-    :return: True if a copy if made, vice versa.
-    """
-    if not os.path.exists(src):
-        return False
-    try:
-        shutil.copy2(src, dst)
-        return True
-    except Exception:
-        return False
-
-
-def link_if_exists(
-    src: str, dst: str | Path = HOME, target_is_directory: bool = True
-) -> bool:
-    """Make a symbolic link of a file.
-    No exception is thrown if the source file does not exist.
-
-    :param src: The path of the source file.
-    :param dst: The path of the destination file.
-    :param target_is_directory: Whether the target is a directory.
-    :return: True if a symbolic link is created, vice versa.
-    """
-    if not os.path.exists(src):
-        return False
-    if os.path.exists(dst):
-        shutil.rmtree(dst)
-    try:
-        os.symlink(src, dst, target_is_directory=target_is_directory)
-        return True
-    except Exception:
-        return False
 
 
 def count_path(
@@ -73,7 +33,7 @@ def count_path(
     :return: A pandas Series with paths as index and frequencies of paths as value.
     """
 
-    def _count_path_helper(path: str, weight: int | float, freq: dict) -> None:
+    def _count_path_helper(path: str, weight: float, freq: dict) -> None:
         fields = path.rstrip("/").split("/")[:-1]
         path = ""
         for field in fields:
@@ -240,7 +200,7 @@ def _find_data_tables_file(file, filter_, patterns) -> set[str]:
     tables = chain.from_iterable(re.findall(pattern, text) for pattern in patterns)
     mapping = str.maketrans("", "", "'\"\\")
     tables = (table.translate(mapping) for table in tables)
-    return set(table for table in tables if filter_(table))
+    return {table for table in tables if filter_(table)}
 
 
 def find_data_tables_sql(sql: str, filter_: Callable | None = None) -> set[str]:
@@ -256,7 +216,7 @@ def find_data_tables_sql(sql: str, filter_: Callable | None = None) -> set[str]:
     tables = (pms[1] for pms in re.findall(pattern, sql))
     if filter_ is None:
         return set(tables)
-    return set(table for table in tables if filter_(table))
+    return {table for table in tables if filter_(table)}
 
 
 def is_empty(dir_: str | Path, ignore: Callable = lambda _: False) -> bool:
@@ -276,16 +236,14 @@ def _ignore(path: Path) -> bool:
     path = path.resolve()
     if path.is_file() and path.name.startswith("."):
         return True
-    if path.is_dir() and path.name in (
+    return path.is_dir() and path.name in (
         ".jukit",
         ".ipynb_checkpoints",
         ".mypy_cache",
         ".pytest_cache",
         ".mtj.tmp",
         "__pycache__",
-    ):
-        return True
-    return False
+    )
 
 
 def remove_ess_empty(path: str | Path, ignore: Callable = _ignore) -> list[Path]:

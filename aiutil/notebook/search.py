@@ -1,15 +1,14 @@
-#!/usr/bin/env python3
 """Search Jupyter/Lab notebooks."""
 
 import json
 from argparse import ArgumentParser, Namespace
 from collections import Counter
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Sequence, TypeAlias
 
 from loguru import logger
 
-Criterion: TypeAlias = str | list[str] | dict[str, list[str]]
+type Criterion = str | list[str] | dict[str, list[str]]
 
 
 def _reg_criterion(criterion: str | list[str] | dict[str, list[str]]):
@@ -302,6 +301,7 @@ def _subparse_search(subparsers):
 
 def main() -> None:
     """The main function of the script."""
+    logger.enable("aiutil")
     args = parse_args()
     args.func(args)
 

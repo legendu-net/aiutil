@@ -1,6 +1,7 @@
 """Collections related utills."""
 
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 
 def format_item_html(key: Any, value: Any) -> str:
