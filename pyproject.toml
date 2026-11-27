@@ -26,12 +26,19 @@ classifiers = [
 dependencies = [
   "dulwich>=0.20.24",
   "loguru>=0.3.2",
+  "mdformat>=1",
+  "mdformat-beautysh>=1",
+  "mdformat-config",
+  "mdformat-myst>=0.3",
+  "mdformat-ruff",
+  "mdformat-rustfmt",
   "nbconvert>=7.16.6",
   "nbformat>=5.10.4",
   "notifiers>=1.2.1",
   "numpy>=2.2.6",
   "pandas>=1.2",
   "pyyaml>=5.3.1",
+  "ruff>=0.11.8",
   "scikit-image>=0.18.3",
   "sqlparse>=0.4.1",
   "tqdm>=4.59",
@@ -62,6 +69,8 @@ optional-dependencies.pdf = [
 urls.Repository = "https://github.com/legendu-net/aiutil"
 scripts.add_pyscript = "aiutil.pyscript:add_pyscript.main"
 scripts.etc_sysctl = "aiutil.pyscript:etc_sysctl.main"
+scripts.fnb = "aiutil.notebook:format.main"
+scripts.format_notebook = "aiutil.notebook:format.main"
 scripts.logf = "aiutil.hadoop:logf.main"
 scripts.match_memory = "aiutil:memory.main"
 scripts.pykinit = "aiutil.hadoop:kerberos.main"
@@ -75,7 +84,6 @@ dev = [
   "pyproject-fmt>=2.21.1",
   "pyright>=1.1.402",
   "pytest>=9.0.2",
-  "ruff>=0.11.8",
   "ty>=0.0.8",
 ]
 
@@ -85,6 +93,14 @@ exclude = [ "tests/notebook/notebooks" ]
 lint.extend-select = [ "I" ]
 
 [tool.deptry]
+per_rule_ignores.DEP002 = [
+  "mdformat-beautysh",
+  "mdformat-config",
+  "mdformat-myst",
+  "mdformat-ruff",
+  "mdformat-rustfmt",
+  "ruff",
+]
 package_module_name_map.opencv-python = "cv2"
 
 [tool.ty]
